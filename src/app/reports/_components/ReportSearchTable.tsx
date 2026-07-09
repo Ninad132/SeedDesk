@@ -53,7 +53,6 @@ export function ReportSearchTable({ rows }: ReportSearchTableProps) {
       <div className="panel-heading table-heading">
         <div>
           <h3>Invoice search</h3>
-          <p>Search reads live Sale-sheet rows from Supabase.</p>
         </div>
         <label className="search-box report-search">
           <Search size={17} />

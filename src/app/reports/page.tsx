@@ -69,7 +69,7 @@ export default async function ReportsPage() {
     <AppShell
       eyebrow="Reports"
       title="Reports and search"
-      subtitle="Live reports from Supabase Sale, Inventory, and Customer Balance views."
+      subtitle="Sales, stock, and customer balances."
     >
       <section className="stats-grid">
         {stats.map(({ icon: Icon, label, value }) => (
@@ -87,13 +87,13 @@ export default async function ReportsPage() {
         <article className="panel">
           <div className="panel-heading">
             <BarChart3 size={19} />
-            <h3>Report relationships</h3>
+            <h3>Reports</h3>
           </div>
           <ul className="step-list">
-            <li>Invoice search reads live Sale-sheet rows.</li>
-            <li>Inventory uses seed_lot_availability.</li>
-            <li>Outstanding report uses customer_balances.</li>
-            <li>Date-wise and item-wise summaries will be expanded after real workflow testing.</li>
+            <li>Invoice search</li>
+            <li>Inventory summary</li>
+            <li>Customer balances</li>
+            <li>Date-wise sales</li>
           </ul>
         </article>
 

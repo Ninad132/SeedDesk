@@ -1,0 +1,135 @@
+SeedDesk Developer Learnings - 2026-07-07
+
+1. Excel is not just data; it is the product specification.
+- For this project, workbook sheets define workflow, formulas, labels, and user mental model.
+- Column names matter because the customer already understands the Excel sheet.
+- UI should keep familiar labels where useful, but unclear labels like Graded2 should be translated into clearer business language.
+- Before changing a workflow, inspect the sheet relationships, not just individual columns.
+
+2. Preserve business flow before beautifying UI.
+- The most important discovery was that INWARDDATA is the true entry point.
+- Purchases is not manual stock entry anymore; it is a raw receipt/reporting layer.
+- Saleable inventory should come from Packing, not raw Inward.
+- Correct flow:
+  Inward -> Purchases/raw receipt -> Grading -> Packing -> Inventory -> Invoice.
+
+3. Separate raw stock from saleable stock.
+- Raw inward material and packed saleable lots are different business objects.
+- It was tempting to send inward directly to Inventory and Invoice, but that would allow selling unprocessed stock.
+- The app now uses source_state = PACKED to filter saleable inventory.
+- Clear source_state values are useful for workflow control.
+
+4. Database views must include all fields used by the app.
+- Inventory and Invoice filtered seed_lot_availability by source_state.
+- The view did not expose source_state, so packed lots were not visible.
+- If a page filters by a field, confirm that the view exposes it.
+- When changing Postgres views, column order matters.
+- create or replace view cannot insert a column in the middle of the existing view column list.
+- Safer quick fix: append new view columns at the end.
+
+5. Supabase schema cache can hide successful SQL changes.
+- After altering tables or replacing views, PostgREST may still use stale schema cache.
+- Use:
+  notify pgrst, 'reload schema';
+- If the app still errors, wait a few seconds and refresh.
+
+6. Avoid partial writes for multi-step saves.
+- Packing save currently:
+  1. creates/updates product
+  2. creates/updates seed_lot
+  3. inserts packing_session
+- If step 3 fails, step 2 may already have changed stock.
+- This can inflate stock if the user retries.
+- Production fix: move multi-step saves into a database RPC/transaction.
+- Any workflow that affects stock should be atomic.
+
+7. Demo fallback data is useful early, harmful later.
+- Early MVP used initialCustomers and initialSeedLots as fallbacks.
+- After connecting Supabase, fallbacks made deleted data appear to still exist.
+- Production/testing pages should show actual DB state.
+- Demo data should be seeded explicitly, not silently injected when DB is empty.
+
+8. Delete actions should exist at the source of truth.
+- Purchase rows are generated from Inward.
+- Therefore delete should be on the Inward entry, not on the generated purchase item.
+- Deleting generated rows directly can leave source records and reports inconsistent.
+- Rule: delete/correct the source record, then cascade/recalculate generated records.
+
+9. Use reports to validate relationships.
+- The Purchases Database-style report is useful because it shows the whole processing chain:
+  inward quantity, graded quantity, undersize, packed quantity, remaining balances.
+- Reports are not just display features; they expose data consistency problems.
+- Negative remaining values should become warnings.
+
+10. Names should reflect business meaning, not raw Excel weirdness.
+- Graded2 is technically the sheet label, but "Total graded quantity" is clearer.
+- Packed Quantity in the sheet means "already packed quantity", not the current packing quantity.
+- The UI should preserve workbook familiarity but improve ambiguous names.
+
+11. Rate placement is a product decision.
+- Rate is not naturally part of packing from a pure processing perspective.
+- But for current client workflow, entering Rate during Packing is practical because Packing creates saleable inventory.
+- Current decision:
+  RATE stays in Packing.
+  RATE is saved to seed_lots.
+  Inventory and Invoice use that rate.
+- Future improvement:
+  product/variety pricing settings with optional override.
+
+12. Multi-company SaaS needs more than company_id.
+- Most tables have company_id, which is a good start.
+- But true SaaS requires:
+  auth
+  user-company mapping
+  roles
+  RLS policies
+  tenant-safe queries
+  company onboarding
+  transactional invoice numbering
+- Hardcoded demoSession is acceptable for pilot, not production SaaS.
+
+13. Invoice numbering needs transaction safety.
+- Current max + 1 logic is okay for testing.
+- Production multi-user systems need DB-side sequencing or RPC.
+- Without transaction safety, two users can get the same invoice number.
+
+14. Read-only calculated fields reduce errors.
+- User-editable calculated fields like Graded2 and Packed Quantity can break balances.
+- Better approach:
+  Total graded quantity = calculated/read-only
+  Already packed quantity = calculated/read-only
+  Available graded quantity = calculated/read-only
+  User enters only current action values.
+
+15. Keep a migration checklist.
+- Every schema change should have:
+  local db/schema.sql update
+  Supabase SQL snippet
+  schema cache reload
+  verification select query
+- Missing one of these causes confusing runtime errors.
+
+16. Build after each significant workflow change.
+- npm run build caught TypeScript/Next issues and confirmed pages compiled.
+- Build passing does not prove database migrations were applied.
+- Runtime Supabase schema still needs separate verification.
+
+17. Recommended engineering pattern for next phase.
+- Create RPC functions for stock-affecting workflows:
+  save_inward_slip
+  save_grading_session
+  save_packing_session
+  save_invoice
+- Keep calculations in one shared place or DB-side functions.
+- Add correction/audit tables before production use.
+- Add tests around:
+  inward formulas
+  grading balances
+  packing balances
+  stock creation
+  invoice stock deduction
+
+Key Takeaway
+- The biggest engineering lesson is that this app is not a CRUD wrapper around Excel.
+- It is a workflow system where each sheet represents a stage in physical seed movement.
+- Good implementation means preserving those stage relationships, keeping derived values read-only, and making stock changes transactional.

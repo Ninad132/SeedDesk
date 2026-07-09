@@ -40,7 +40,7 @@ export default async function SettingsPage() {
   };
 
   return (
-    <AppShell eyebrow="Settings" title="Company settings" subtitle="Vasundhara is the first company tenant; the schema is ready for more seed dealers.">
+    <AppShell eyebrow="Settings" title="Company settings" subtitle="Company profile and preferences.">
       <article className="panel">
         <div className="panel-heading">
           <Settings size={19} />

@@ -1,0 +1,181 @@
+SeedDesk Daily Log - 2026-07-07
+
+Context
+- Project: SeedDesk / Vasundhara seed company SaaS MVP.
+- Main client files under review:
+  - INWARD WHEAT 2026 (4).xlsm
+  - Vasundhara_Billing (2).html
+- Current product direction:
+  - Inward is the primary entry point.
+  - Purchases is now a raw receipt/reporting view, not manual stock entry.
+  - Saleable inventory should come from Packing output.
+
+Key Business Rules Clarified
+- VS = government certified seed.
+- TL = unregistered seed.
+- Correct operational flow:
+  Inward -> Purchases/raw receipt -> Grading -> Packing -> Inventory -> New Invoice.
+- Raw inward stock should not be directly available in New Invoice.
+- Packing creates the saleable inventory lot.
+- LOT NO in Packing means the saleable packed lot number, not the inward slip number.
+- RATE will stay in Packing for now.
+  - User enters RATE while packing.
+  - RATE is saved to packing_sessions and copied to seed_lots.
+  - Inventory and New Invoice use that seed_lot rate.
+
+Formula Notes
+- Inward formulas match the workbook notes:
+  - Net Wt = First Wt - Second Wt
+  - Bag Wgt = Bags * Size
+  - Wgt-Bag = (Net Wt - Bag Wgt) / 100
+  - BOUNCING = ROUNDUP((Net Wt / 90) * 0.003, 2)
+  - NET WEIGHT = Wgt-Bag - BOUNCING
+  - AMOUNT = RATE * NET WEIGHT
+- Current code uses Math.max(First Wt - Second Wt, 0), so negative Net Wt is prevented.
+- Grading formulas:
+  - GRADED QUANTITY = GRADED BAGS * GRADED BAG SIZE / 100
+  - Total Graded = GRADED QUANTITY + GRADED LOOSE
+  - UNDERSIZE % = UNDERSIZE / WEIGHT RECPT * 100
+  - Final Graded = Total Graded + UNDERSIZE
+  - Current app Difference = WEIGHT RECPT - Final Graded
+- Packing formulas:
+  - Already packed quantity = sum of previous packing_sessions.total_packed for supplier + variety
+  - Available graded quantity = Total graded quantity - Already packed quantity
+  - Packing Quantity = NO OF BAGS * PACKING BAG SIZE / 100
+  - Total packed = Packing Quantity + PACKING LOOSE + GHAMSI
+  - Remaining after packing = Available graded quantity - Total packed
+- Purchases Database-style report:
+  - Remaining Gradings = Wgt-BagS - Total Graded QT - U/s
+  - Remaining packings = Total Graded QT - Packed Qty
+
+Implementation Completed Today
+- Removed demo fallback data from live pages:
+  - Inventory no longer shows built-in seed lots when Supabase is empty.
+  - New Invoice no longer shows built-in lots/customers when Supabase is empty.
+  - Dashboard no longer shows fallback stock/customer totals.
+  - Customers page no longer shows built-in demo customers.
+- Purchases page:
+  - Added Database-style report based on the workbook Database sheet.
+  - Report columns:
+    Material Name, Supplier Name, INWARD BAGS, Wgt-BagS, GRADED BAG,
+    Total Graded QT, U/s, Remaining Gradings, packed bags, Packed Qty,
+    Remaining packings.
+  - Added search by material/supplier.
+  - Added donut summary for packed/graded/balance clarity.
+  - Changed lower "Purchase from inward" table to match Recent INWARDDATA rows:
+    SLIPNO, Truck No, Material Name, Supplier Name, Net Wt, NET WEIGHT,
+    RATE, AMOUNT, Action.
+  - Delete button now deletes the inward slip, not the purchase item.
+  - Deleting an inward slip reverses linked raw stock and deletes linked purchase item/purchase record.
+- Processing > Packing form:
+  - Replaced editable Graded2 and Packed Quantity fields.
+  - Added read-only:
+    - Total graded quantity
+    - Already packed quantity
+    - Available graded quantity
+  - Kept editable:
+    - NO OF BAGS
+    - PACKING BAG SIZE
+    - PACKING LOOSE
+    - GHAMSI
+    - LOT NO
+    - Seed type
+    - RATE
+    - LOCATION
+    - MOISTURE
+    - GERMINATION
+    - REMARK
+  - Save action uses calculated gradedInput and packedQuantityBefore.
+- Packing save flow:
+  - Creates/updates product.
+  - Creates/updates seed_lots with source_state = PACKED.
+  - Saves packing_sessions with seed_type, rate, and seed_lot_id.
+  - Revalidates Processing, Inventory, Invoice, Reports, Dashboard.
+- Inventory and Invoice:
+  - Both now read only packed lots:
+    source_state = PACKED.
+
+Supabase SQL/Migration Notes
+- Live Supabase may need these columns on packing_sessions:
+  alter table packing_sessions
+  add column if not exists seed_type text not null default 'VS' check (seed_type in ('VS', 'TL'));
+
+  alter table packing_sessions
+  add column if not exists rate numeric(12,2) not null default 0;
+
+  alter table packing_sessions
+  add column if not exists seed_lot_id uuid references seed_lots(id) on delete set null;
+
+  notify pgrst, 'reload schema';
+- seed_lot_availability view must expose source_state.
+- Correct view replacement appends source_state at the end to avoid PostgreSQL column-order error:
+  create or replace view seed_lot_availability as
+  select
+    sl.company_id,
+    sl.id as seed_lot_id,
+    p.crop,
+    p.variety_name,
+    p.display_name,
+    sl.lot_number,
+    sl.seed_class,
+    sl.packing_kg,
+    sl.rate,
+    sl.opening_bags,
+    sl.current_bags,
+    sl.hold_bags,
+    greatest(sl.current_bags - sl.hold_bags, 0) as available_bags,
+    (greatest(sl.current_bags - sl.hold_bags, 0) * sl.packing_kg) / 100 as available_quintal,
+    ((greatest(sl.current_bags - sl.hold_bags, 0) * sl.packing_kg) / 100) * sl.rate as available_value,
+    case
+      when greatest(sl.current_bags - sl.hold_bags, 0) <= 0 then 'sold_out'
+      when greatest(sl.current_bags - sl.hold_bags, 0) <= 10 then 'low_stock'
+      else 'healthy'
+    end as stock_status,
+    sl.source_state
+  from seed_lots sl
+  join products p on p.id = sl.product_id;
+
+  notify pgrst, 'reload schema';
+
+Known Issue / Caution
+- Packing save currently creates/updates seed_lots before inserting packing_sessions.
+- If packing_sessions insert fails after the seed_lot write, packed stock can be created/incremented even though the UI shows an error.
+- This should be fixed later by moving Packing save into a database RPC/transaction.
+- If the user retried failed packing saves, check for inflated current_bags in seed_lots.
+
+Useful Supabase Checks
+- Check packed lots:
+  select lot_number, source_state, current_bags, rate
+  from seed_lot_availability
+  where source_state = 'PACKED';
+- Check seed lots directly:
+  select lot_number, source_state, current_bags, opening_bags, rate
+  from seed_lots
+  order by created_at desc;
+- Clean operational data for fresh testing:
+  delete from invoice_items;
+  delete from invoices;
+  delete from stock_adjustments;
+  delete from packing_sessions;
+  delete from grading_sessions;
+  delete from inward_slips;
+  delete from purchase_items;
+  delete from purchases;
+  delete from seed_lots;
+  delete from products;
+  delete from customers;
+
+Build Status
+- npm run build passed after the major changes made today.
+
+Recommended Next Work
+- Test full fresh flow after SQL migrations:
+  1. Inward
+  2. Grading
+  3. Packing with Lot No and Rate
+  4. Confirm packed lot appears in Inventory
+  5. Confirm packed lot appears in New Invoice with correct rate
+- Add transaction/RPC for Packing save to prevent partial seed_lot updates.
+- Add edit/delete for grading and packing entries.
+- Add warnings when Remaining packing or Remaining after packing is negative.
+- Eventually add auth, tenant isolation, and RLS before selling as multi-company SaaS.

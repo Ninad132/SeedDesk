@@ -5,6 +5,7 @@ import {
   Boxes,
   FilePlus2,
   FileText,
+  Factory,
   LayoutDashboard,
   PanelLeftClose,
   PanelLeftOpen,
@@ -17,7 +18,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { demoSession } from "@/lib/session";
 
 const navItems = [
   { href: "/", key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -25,6 +25,7 @@ const navItems = [
   { href: "/reports", key: "reports", label: "Reports", icon: BarChart3 },
   { href: "/customers", key: "customers", label: "Customers", icon: UsersRound },
   { href: "/inventory", key: "inventory", label: "Inventory", icon: Boxes },
+  { href: "/processing", key: "processing", label: "Processing", icon: Factory },
   { href: "/ledger", key: "ledger", label: "Ledger", icon: WalletCards },
   { href: "/purchases", key: "purchases", label: "Purchases", icon: PackagePlus },
   { href: "/invoices", key: "invoices", label: "Invoices", icon: FileText },
@@ -41,7 +42,6 @@ type AppShellProps = {
 
 export function AppShell({ action, children, eyebrow, subtitle, title }: AppShellProps) {
   const pathname = usePathname();
-  const company = demoSession.company;
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
@@ -82,20 +82,16 @@ export function AppShell({ action, children, eyebrow, subtitle, title }: AppShel
             </button>
             <div>
               <p>{eyebrow}</p>
-              <h1>{title}</h1>
+              <div className="topbar-brand-line">
+                <span>Vasundhara Seeds</span>
+                <i />
+                <h1>{title}</h1>
+              </div>
+              {subtitle ? <span className="topbar-subtitle">{subtitle}</span> : null}
             </div>
           </div>
           {action ? <div className="topbar-actions">{action}</div> : null}
         </header>
-
-        {subtitle ? (
-          <section className="hero-band">
-            <div>
-              <p>{company.name}</p>
-              <h2>{subtitle}</h2>
-            </div>
-          </section>
-        ) : null}
 
         {children}
       </section>

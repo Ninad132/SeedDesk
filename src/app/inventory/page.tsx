@@ -1,7 +1,6 @@
 import { Boxes } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import { availableBags, initialSeedLots, quantityQuintal, stockValue } from "@/lib/inventory";
 import { demoSession } from "@/lib/session";
 import { createServerAnonSupabaseClient } from "@/lib/supabase/server";
 import StockAdjustmentForm, { type AdjustmentLotOption } from "./_components/StockAdjustmentForm";
@@ -17,6 +16,7 @@ type InventoryRow = {
   current_bags: number;
   display_name: string;
   hold_bags: number;
+  inward_slip_id: string | null;
   lot_number: string;
   opening_bags: number;
   packing_kg: number;
@@ -42,47 +42,35 @@ type StockAdjustmentRow = {
   } | null;
 };
 
-function getFallbackRows(): InventoryRow[] {
-  return initialSeedLots.map((lot) => {
-    const available = availableBags(lot);
-
-    return {
-      available_bags: available,
-      available_quintal: quantityQuintal(available, lot.packingKg),
-      available_value: stockValue(lot),
-      company_id: lot.companyId,
-      crop: lot.crop,
-      current_bags: lot.openingBags - lot.soldBags,
-      display_name: lot.varietyName,
-      hold_bags: lot.holdBags,
-      lot_number: lot.lotNumber,
-      opening_bags: lot.openingBags,
-      packing_kg: lot.packingKg,
-      rate: lot.rate,
-      seed_class: lot.seedClass,
-      seed_lot_id: lot.id,
-      source_state: lot.sourceState,
-      variety_name: lot.varietyName
-    };
-  });
-}
+type InwardMaterialRow = {
+  id: string;
+  slip_no: number;
+  supplier_name: string;
+};
 
 export default async function InventoryPage() {
   const supabase = createServerAnonSupabaseClient();
-  const [{ data }, { data: adjustments }] = (await Promise.all([
+  const [{ data }, { data: adjustments }, { data: inwardRows }] = (await Promise.all([
     supabase
       .from("seed_lot_availability")
       .select("*")
       .eq("company_id", demoSession.company.id)
+      .eq("source_state", "PACKED")
       .order("display_name"),
     supabase
       .from("stock_adjustments")
       .select("id,adjustment_date,adjustment_type,bags,reason,notes,seed_lots(lot_number,products(display_name))")
       .eq("company_id", demoSession.company.id)
       .order("adjustment_date", { ascending: false })
-      .limit(10)
-  ])) as [{ data: InventoryRow[] | null }, { data: StockAdjustmentRow[] | null }];
-  const rows = data && data.length > 0 ? data : getFallbackRows();
+      .limit(10),
+    supabase
+      .from("inward_slips")
+      .select("id,slip_no,supplier_name")
+      .eq("company_id", demoSession.company.id)
+  ])) as [{ data: InventoryRow[] | null }, { data: StockAdjustmentRow[] | null }, { data: InwardMaterialRow[] | null }];
+  const inwardIds = new Set((inwardRows ?? []).map((row) => row.id));
+  const inwardById = new Map((inwardRows ?? []).map((row) => [row.id, row]));
+  const rows = (data ?? []).filter((lot) => lot.inward_slip_id && inwardIds.has(lot.inward_slip_id));
   const totalStock = rows.reduce((total, lot) => total + Number(lot.available_bags ?? 0), 0);
   const adjustmentLots: AdjustmentLotOption[] = rows.map((lot) => ({
     availableBags: Number(lot.available_bags ?? 0),
@@ -96,7 +84,7 @@ export default async function InventoryPage() {
     <AppShell
       eyebrow="Inventory"
       title="Inventory"
-      subtitle="Excel-style Inventory view using Variety, Purchse Qty, Sale Qty, HOLD, and In Stock."
+      subtitle="Lot-wise stock, holds, and availability."
     >
       <section className="stats-grid">
         <article className="stat-card">
@@ -163,8 +151,10 @@ export default async function InventoryPage() {
                 <th>HOLD</th>
                 <th>In Stock</th>
                 <th>RATE</th>
-                <th>Column 1</th>
+                <th>Seed type</th>
                 <th>Lot No</th>
+                <th>Inward Slip No</th>
+                <th>Supplier</th>
                 <th>Weight</th>
                 <th>Quantity</th>
                 <th>Value</th>
@@ -187,6 +177,8 @@ export default async function InventoryPage() {
                     <td>{formatCurrency(Number(lot.rate ?? 0))}</td>
                     <td>{lot.seed_class}</td>
                     <td>{lot.lot_number}</td>
+                    <td>{lot.inward_slip_id ? `SLIP-${inwardById.get(lot.inward_slip_id)?.slip_no ?? "-"}` : "-"}</td>
+                    <td>{lot.inward_slip_id ? inwardById.get(lot.inward_slip_id)?.supplier_name ?? "-" : "-"}</td>
                     <td>{formatNumber(Number(lot.packing_kg ?? 0))}</td>
                     <td>{formatNumber(Number(lot.available_quintal ?? 0))}</td>
                     <td>{formatCurrency(Number(lot.available_value ?? 0))}</td>

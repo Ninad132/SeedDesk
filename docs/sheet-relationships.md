@@ -4,19 +4,21 @@ The app must preserve the workbook relationships from `Copy of Billing.xlsx`.
 
 ## Workbook Flow
 
-1. `Purchase` is the source for stock received.
-2. `Sale` is the source for stock sold and customer billing.
-3. `Inventory` is calculated from `Purchase` and `Sale`.
-4. `Invoice` is the entry/print screen that writes rows into `Sale`.
-5. Customer ledger is calculated from `Sale` invoice totals and payment columns.
+1. `INWARDDATA` is the source for raw stock received.
+2. `Purchase` is the raw receipt ledger generated from inward entries.
+3. `GRADING PACKING` / `PACKING` produces packed saleable lots.
+4. `Inventory` shows packed saleable lots minus sold/held bags.
+5. `Invoice` is the entry/print screen that writes rows into `Sale`.
+6. Customer ledger is calculated from `Sale` invoice totals and payment columns.
 
 ## Relationship Rules
 
 ### Purchase -> Inventory
 
-- `Purchase.Variety` maps to `Inventory.Variety`.
-- `Purchase.Bags` contributes to `Inventory.Purchse Qty`.
-- `Purchase.Weight` is used to calculate `Purchase.Quantity`.
+- Inward-generated `Purchase` rows are raw receipt rows.
+- Raw inward lots are not directly saleable.
+- Packing output creates the saleable inventory lot.
+- Packed `NO OF BAGS` contributes to `Inventory.Purchse Qty` / available bags.
 - `Inventory.In Stock = Purchse Qty - Sale Qty - HOLD`.
 
 ### Sale -> Inventory
@@ -79,13 +81,14 @@ In the app:
 
 - `H10` maps to selected `Lot No` / item.
 - `Table2` maps to Inventory.
-- `Table2` column 10 maps to Inventory `Column 1`.
-- `Column 1` is derived from the selected inventory item:
-  - items ending in `KG` use `TL`
-  - other lot-numbered items use `VS`
-- The next invoice number is calculated as max existing Sale `Invoice no` for that `Column 1`, plus one.
+- `Table2` column 10 maps to Inventory seed type.
+- Client clarified seed type meaning:
+  - `VS` = government certified seed
+  - `TL` = unregistered seed
+- Seed type must be selected/stored explicitly. It should not be inferred only from `KG` in the item name.
+- The next invoice number is calculated as max existing Sale `Invoice no` for that seed type, plus one.
 
-TODO: Confirm this invoice series rule with the client before final implementation. The current app mirrors the workbook pattern, but the client may want separate series behavior for `TL`, `VS`, credit invoices, or different seed categories.
+TODO: Confirm whether dealer/wholesale mode from `Vasundhara_Billing (2).html` needs a separate invoice number series in addition to `TL` and `VS`.
 
 ## Day 6 Report Implementation
 

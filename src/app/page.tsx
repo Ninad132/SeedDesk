@@ -1,114 +1,169 @@
-import { Boxes, FilePlus2, ReceiptIndianRupee, Search, UsersRound, WalletCards } from "lucide-react";
-import Link from "next/link";
+import { BarChart3, Boxes, CalendarDays, PackageCheck, ReceiptIndianRupee, UsersRound, WalletCards } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { initialCustomers } from "@/lib/customers";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import { availableBags, initialSeedLots, stockValue } from "@/lib/inventory";
 import { demoSession } from "@/lib/session";
 import { createServerAnonSupabaseClient } from "@/lib/supabase/server";
-import { getInvoiceRows, saleReportRows } from "@/lib/reports";
 
 export const dynamic = "force-dynamic";
-
-const modules = [
-  {
-    href: "/invoice",
-    icon: FilePlus2,
-    label: "New Invoice",
-    text: "Create invoice rows, print bill, and generate Sale rows."
-  },
-  {
-    href: "/reports",
-    icon: Search,
-    label: "Reports",
-    text: "Search invoices, date-wise sales, stock, and outstanding Difference."
-  },
-  {
-    href: "/inventory",
-    icon: Boxes,
-    label: "Inventory",
-    text: "Review Variety, Purchse Qty, Sale Qty, HOLD, and In Stock."
-  },
-  {
-    href: "/customers",
-    icon: UsersRound,
-    label: "Customers",
-    text: "Maintain Customer name, Village, Mobile No, remark, and ledger."
-  }
-] as const;
 
 type DashboardInvoiceRow = {
   due_amount: number;
   grand_total: number;
+  invoice_date: string;
+};
+
+type DashboardInvoiceItemRow = {
+  amount: number;
+  bags: number;
+  item_name: string;
+  quantity_quintal: number;
 };
 
 type DashboardInventoryRow = {
   available_bags: number;
   available_value: number;
+  display_name: string;
+  inward_slip_id: string | null;
 };
 
 type DashboardCustomerRow = {
   id: string;
 };
 
+type DashboardInwardRow = {
+  id: string;
+};
+
+type ProductSummary = {
+  amount: number;
+  bags: number;
+  name: string;
+  quantity: number;
+};
+
+type InventorySummary = {
+  bags: number;
+  name: string;
+  value: number;
+};
+
 async function getDashboardData() {
   const supabase = createServerAnonSupabaseClient();
-  const [invoiceResult, inventoryResult, customerResult] = await Promise.all([
+  const today = new Date().toISOString().slice(0, 10);
+  const [invoiceResult, invoiceItemResult, inventoryResult, customerResult, inwardResult] = await Promise.all([
     supabase
       .from("invoices")
-      .select("grand_total,due_amount")
+      .select("grand_total,due_amount,invoice_date")
+      .eq("company_id", demoSession.company.id),
+    supabase
+      .from("invoice_items")
+      .select("item_name,bags,quantity_quintal,amount")
       .eq("company_id", demoSession.company.id),
     supabase
       .from("seed_lot_availability")
-      .select("available_bags,available_value")
-      .eq("company_id", demoSession.company.id),
+      .select("display_name,inward_slip_id,available_bags,available_value")
+      .eq("company_id", demoSession.company.id)
+      .eq("source_state", "PACKED"),
     supabase
       .from("customers")
+      .select("id")
+      .eq("company_id", demoSession.company.id),
+    supabase
+      .from("inward_slips")
       .select("id")
       .eq("company_id", demoSession.company.id)
   ]);
 
+  const inwardIds = new Set(((inwardResult.data ?? []) as DashboardInwardRow[]).map((row) => row.id));
+
   return {
     customers: (customerResult.data ?? []) as DashboardCustomerRow[],
-    inventory: (inventoryResult.data ?? []) as DashboardInventoryRow[],
-    invoices: (invoiceResult.data ?? []) as DashboardInvoiceRow[]
+    inventory: ((inventoryResult.data ?? []) as DashboardInventoryRow[]).filter((lot) => lot.inward_slip_id && inwardIds.has(lot.inward_slip_id)),
+    invoiceItems: (invoiceItemResult.data ?? []) as DashboardInvoiceItemRow[],
+    invoices: (invoiceResult.data ?? []) as DashboardInvoiceRow[],
+    today
   };
 }
 
-export default async function DashboardPage() {
-  const { customers, inventory, invoices } = await getDashboardData();
-  const fallbackInvoiceRows = getInvoiceRows(saleReportRows);
-  const fallbackStock = initialSeedLots.reduce((total, lot) => total + availableBags(lot), 0);
-  const fallbackStockAmount = initialSeedLots.reduce((total, lot) => total + stockValue(lot), 0);
+function summarizeProducts(items: DashboardInvoiceItemRow[]) {
+  const productMap = new Map<string, ProductSummary>();
 
-  const sales = invoices.length > 0
-    ? invoices.reduce((total, row) => total + Number(row.grand_total ?? 0), 0)
-    : fallbackInvoiceRows.reduce((total, row) => total + row.grandTotal, 0);
-  const difference = invoices.length > 0
-    ? invoices.reduce((total, row) => total + Number(row.due_amount ?? 0), 0)
-    : fallbackInvoiceRows.reduce((total, row) => total + row.difference, 0);
-  const stock = inventory.length > 0
-    ? inventory.reduce((total, lot) => total + Number(lot.available_bags ?? 0), 0)
-    : fallbackStock;
-  const stockAmount = inventory.length > 0
-    ? inventory.reduce((total, lot) => total + Number(lot.available_value ?? 0), 0)
-    : fallbackStockAmount;
-  const customerRows = customers.length > 0 ? customers.length : initialCustomers.length;
+  for (const item of items) {
+    const name = item.item_name || "Unknown item";
+    const current = productMap.get(name) ?? { amount: 0, bags: 0, name, quantity: 0 };
+    current.amount += Number(item.amount ?? 0);
+    current.bags += Number(item.bags ?? 0);
+    current.quantity += Number(item.quantity_quintal ?? 0);
+    productMap.set(name, current);
+  }
+
+  return Array.from(productMap.values()).sort((a, b) => b.amount - a.amount);
+}
+
+function summarizeInventory(lots: DashboardInventoryRow[]) {
+  const inventoryMap = new Map<string, InventorySummary>();
+
+  for (const lot of lots) {
+    const name = lot.display_name || "Unknown item";
+    const current = inventoryMap.get(name) ?? { bags: 0, name, value: 0 };
+    current.bags += Number(lot.available_bags ?? 0);
+    current.value += Number(lot.available_value ?? 0);
+    inventoryMap.set(name, current);
+  }
+
+  return Array.from(inventoryMap.values()).sort((a, b) => b.bags - a.bags);
+}
+
+export default async function DashboardPage() {
+  const { customers, inventory, invoiceItems, invoices, today } = await getDashboardData();
+  const totalRevenue = invoices.reduce((total, row) => total + Number(row.grand_total ?? 0), 0);
+  const todaysSale = invoices
+    .filter((row) => row.invoice_date === today)
+    .reduce((total, row) => total + Number(row.grand_total ?? 0), 0);
+  const totalBagsSold = invoiceItems.reduce((total, row) => total + Number(row.bags ?? 0), 0);
+  const creditPending = invoices.reduce((total, row) => total + Number(row.due_amount ?? 0), 0);
+  const stockBags = inventory.reduce((total, lot) => total + Number(lot.available_bags ?? 0), 0);
+  const stockValue = inventory.reduce((total, lot) => total + Number(lot.available_value ?? 0), 0);
+  const productSummary = summarizeProducts(invoiceItems);
+  const maxProductAmount = Math.max(...productSummary.map((product) => product.amount), 1);
+  const topProducts = productSummary.slice(0, 8);
+  const topFiveProducts = productSummary.slice(0, 5);
+  const inventorySummary = summarizeInventory(inventory).slice(0, 8);
+  const maxInventoryBags = Math.max(...inventorySummary.map((lot) => lot.bags), 1);
+
+  const heroMetrics = [
+    { label: "Total revenue", value: formatCurrency(totalRevenue), icon: ReceiptIndianRupee },
+    { label: "Today's sale", value: formatCurrency(todaysSale), icon: CalendarDays },
+    { label: "Total bags sold", value: formatNumber(totalBagsSold), icon: PackageCheck },
+    { label: "Credit pending", value: formatCurrency(creditPending), icon: WalletCards }
+  ];
 
   const stats = [
-    { label: "GRAND TOTAL", value: formatCurrency(sales), icon: ReceiptIndianRupee },
-    { label: "Difference", value: formatCurrency(difference), icon: WalletCards },
-    { label: "In Stock", value: formatNumber(stock), icon: Boxes },
-    { label: "Customer rows", value: formatNumber(customerRows), icon: UsersRound }
+    { label: "Invoices", value: formatNumber(invoices.length), icon: BarChart3 },
+    { label: "Customers", value: formatNumber(customers.length), icon: UsersRound },
+    { label: "Stock bags", value: formatNumber(stockBags), icon: Boxes },
+    { label: "Stock value", value: formatCurrency(stockValue), icon: ReceiptIndianRupee }
   ];
 
   return (
     <AppShell
-      eyebrow="Day 7 MVP"
-      title="SeedDesk MVP"
-      subtitle="Seed dealer billing, lot-wise inventory, customer ledger, invoice print, and reports are now connected as a navigable MVP."
+      eyebrow="Dashboard"
+      title="SeedDesk"
+      subtitle="Daily sales, credit, stock, and product performance."
     >
-      <section className="stats-grid">
+      <section className="dashboard-hero-grid">
+        {heroMetrics.map(({ icon: Icon, label, value }) => (
+          <article className="dashboard-metric-card" key={label}>
+            <div className="dashboard-metric-icon">
+              <Icon size={20} />
+            </div>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </article>
+        ))}
+      </section>
+
+      <section className="stats-grid dashboard-stats-grid">
         {stats.map(({ icon: Icon, label, value }) => (
           <article className="stat-card" key={label}>
             <div className="stat-icon">
@@ -120,39 +175,67 @@ export default async function DashboardPage() {
         ))}
       </section>
 
-      <section className="module-grid">
-        {modules.map(({ href, icon: Icon, label, text }) => (
-          <Link className="module-card" href={href} key={href}>
-            <div className="stat-icon">
-              <Icon size={20} />
-            </div>
-            <strong>{label}</strong>
-            <span>{text}</span>
-          </Link>
-        ))}
-      </section>
-
-      <section className="content-grid">
-        <article className="panel wide">
+      <section className="dashboard-content-grid">
+        <article className="panel dashboard-chart-panel">
           <div className="panel-heading">
-            <Boxes size={19} />
-            <h3>MVP relationship status</h3>
+            <BarChart3 size={19} />
+            <h3>Product sales by revenue</h3>
           </div>
-          <ul className="step-list">
-            <li>Purchase and stock rows feed Inventory.</li>
-            <li>Inventory In Stock controls invoice item availability.</li>
-            <li>Invoice finalization creates Sale rows and reduces stock.</li>
-            <li>Sale payment columns drive Customer Difference and reports.</li>
-            <li>Print preview uses the same invoice rows, not separate calculations.</li>
-          </ul>
+          <div className="product-bar-list">
+            {topProducts.length > 0 ? topProducts.map((product) => (
+              <div className="product-bar-row" key={product.name}>
+                <div className="product-bar-meta">
+                  <strong>{product.name}</strong>
+                  <span>{formatCurrency(product.amount)} · {formatNumber(product.bags)} bags · {formatNumber(product.quantity)} qtl</span>
+                </div>
+                <div className="product-bar-track">
+                  <div style={{ width: `${Math.max((product.amount / maxProductAmount) * 100, 3)}%` }} />
+                </div>
+              </div>
+            )) : (
+              <p className="dashboard-empty">No invoice item sales yet.</p>
+            )}
+          </div>
         </article>
 
-        <article className="panel">
+        <article className="panel dashboard-chart-panel">
           <div className="panel-heading">
-            <ReceiptIndianRupee size={19} />
-            <h3>Stock value</h3>
+            <PackageCheck size={19} />
+            <h3>Top 5 sold products</h3>
           </div>
-          <p>{formatCurrency(stockAmount)}</p>
+          <div className="top-products-list">
+            {topFiveProducts.length > 0 ? topFiveProducts.map((product, index) => (
+              <div className="top-product-row" key={product.name}>
+                <span>{index + 1}</span>
+                <div>
+                  <strong>{product.name}</strong>
+                  <small>{formatNumber(product.bags)} bags · {formatCurrency(product.amount)}</small>
+                </div>
+              </div>
+            )) : (
+              <p className="dashboard-empty">No sold products yet.</p>
+            )}
+          </div>
+        </article>
+      </section>
+
+      <section className="dashboard-content-grid single-chart-grid">
+        <article className="panel dashboard-chart-panel">
+          <div className="panel-heading">
+            <Boxes size={19} />
+            <h3>Inventory position</h3>
+          </div>
+          <div className="inventory-vertical-chart">
+            {inventorySummary.length > 0 ? inventorySummary.map((lot) => (
+              <div className="inventory-vertical-bar" key={lot.name}>
+                <div className="inventory-vertical-value">{formatNumber(lot.bags)}</div>
+                <div className="inventory-vertical-track">
+                  <div style={{ height: `${Math.max((lot.bags / maxInventoryBags) * 100, 6)}%` }} />
+                </div>
+                <span>{lot.name}</span>
+              </div>
+            )) : <p className="dashboard-empty">No packed inventory available.</p>}
+          </div>
         </article>
       </section>
     </AppShell>

@@ -20,6 +20,7 @@ export default function PurchaseForm({ productNames }: PurchaseFormProps) {
   const [bags, setBags] = useState("1");
   const [weight, setWeight] = useState("40");
   const [rate, setRate] = useState("0");
+  const [seedType, setSeedType] = useState<"VS" | "TL">("VS");
   const [sourceState, setSourceState] = useState("");
   const [message, setMessage] = useState("");
   const [isSaving, startSaving] = useTransition();
@@ -27,7 +28,6 @@ export default function PurchaseForm({ productNames }: PurchaseFormProps) {
   const variety = useMemo(() => [column3.trim(), lotNo.trim()].filter(Boolean).join(" "), [column3, lotNo]);
   const quantity = quantityQuintal(Number(bags) || 0, Number(weight) || 0);
   const amount = quantity * (Number(rate) || 0);
-  const inventoryColumn1 = variety.trim().toUpperCase().endsWith("KG") ? "TL" : "VS";
 
   function submitPurchase(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -40,6 +40,7 @@ export default function PurchaseForm({ productNames }: PurchaseFormProps) {
         lotNo,
         purchaseDate,
         rate: Number(rate) || 0,
+        seedType,
         sourceState,
         supplierName,
         variety,
@@ -117,8 +118,11 @@ export default function PurchaseForm({ productNames }: PurchaseFormProps) {
           <input placeholder="MP, GD, GJ" value={sourceState} onChange={(event) => setSourceState(event.target.value)} />
         </label>
         <label>
-          <span>Inventory type</span>
-          <input readOnly value={inventoryColumn1} />
+          <span>Seed type</span>
+          <select value={seedType} onChange={(event) => setSeedType(event.target.value as "VS" | "TL")}>
+            <option value="VS">VS - government certified</option>
+            <option value="TL">TL - unregistered</option>
+          </select>
         </label>
         <label>
           <span>Value</span>

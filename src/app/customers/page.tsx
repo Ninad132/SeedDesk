@@ -1,6 +1,5 @@
 import { UsersRound } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { initialCustomers, initialLedgerRows } from "@/lib/customers";
 import { formatCurrency, formatNumber } from "@/lib/format";
 import { demoSession } from "@/lib/session";
 import { createServerAnonSupabaseClient } from "@/lib/supabase/server";
@@ -14,17 +13,6 @@ type CustomerRow = {
   village: string | null;
 };
 
-function getFallbackCustomers(): CustomerRow[] {
-  return initialCustomers.map((customer) => ({
-    id: customer.id,
-    mobile: customer.mobileNo,
-    name: customer.customerName,
-    notes: customer.remark,
-    opening_balance: customer.openingDifference,
-    village: customer.village
-  }));
-}
-
 export default async function CustomersPage() {
   const supabase = createServerAnonSupabaseClient();
   const { data } = (await supabase
@@ -32,14 +20,14 @@ export default async function CustomersPage() {
     .select("id,name,village,mobile,opening_balance,notes")
     .eq("company_id", demoSession.company.id)
     .order("name")) as { data: CustomerRow[] | null };
-  const customers = data && data.length > 0 ? data : getFallbackCustomers();
-  const outstanding = initialLedgerRows.reduce((total, row) => total + row.difference, 0);
+  const customers = data ?? [];
+  const outstanding = customers.reduce((total, row) => total + Number(row.opening_balance ?? 0), 0);
 
   return (
     <AppShell
       eyebrow="Customers"
       title="Customers and ledger"
-      subtitle="Customer master follows the Sale sheet fields: Customer name, Village, Mobile No, remark, and Difference."
+      subtitle="Names, villages, mobile numbers, and balances."
     >
       <section className="stats-grid">
         <article className="stat-card">
@@ -62,7 +50,6 @@ export default async function CustomersPage() {
         <div className="panel-heading table-heading">
           <div>
             <h3>Customer master</h3>
-            <p>Primary customer fields match the Excel Sale sheet.</p>
           </div>
         </div>
         <div className="stock-table-wrap">
@@ -77,7 +64,7 @@ export default async function CustomersPage() {
               </tr>
             </thead>
             <tbody>
-              {customers.map((customer) => (
+              {customers.length > 0 ? customers.map((customer) => (
                 <tr key={customer.id}>
                   <td>{customer.name}</td>
                   <td>{customer.village}</td>
@@ -85,7 +72,11 @@ export default async function CustomersPage() {
                   <td>{customer.notes}</td>
                   <td>{formatCurrency(Number(customer.opening_balance ?? 0))}</td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={5}>No customers saved yet.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

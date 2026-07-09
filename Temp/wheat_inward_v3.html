@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Wheat Inward 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--sur:#161b22;--sur2:#1c2333;--sur3:#21262d;
+  --bdr:#30363d;--bdr2:#21262d;
+  --tx:#e6edf3;--tx2:#8b949e;--tx3:#484f58;
+  --grn:#3fb950;--grn-d:#1a3a1f;
+  --amb:#d29922;--amb-d:#3a2c0a;
+  --blu:#58a6ff;--blu-d:#0d2044;
+  --pur:#bc8cff;--pur-d:#2a1a44;
+  --red:#f85149;--red-d:#3a0f0e;
+  --tel:#39d0c8;--tel-d:#0a2e2c;
+  --acc:#f0883e;--acc-d:#3a1f08;
+  --r:10px;--nh:56px;--nb:58px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh;font-size:14px;overflow-x:hidden}
+
+/* topbar */
+.tb{position:sticky;top:0;z-index:100;background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;padding:0 14px;height:var(--nh)}
+.tb-logo{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:var(--acc);flex:1}
+.tb-logo span{color:var(--tx2);font-weight:400;font-size:12px}
+.tb-badge{background:var(--acc-d);color:var(--acc);border:1px solid var(--acc);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:600}
+
+/* bottomnav */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--sur);border-top:1px solid var(--bdr);display:grid;grid-template-columns:repeat(5,1fr);height:var(--nb)}
+.nb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;color:var(--tx3);font-family:'Noto Sans',sans-serif;font-size:9px;font-weight:500;transition:color .15s;padding:5px 0}
+.nb svg{width:19px;height:19px}
+.nb.active{color:var(--acc)}
+
+/* pages */
+.pg{display:none;padding:12px 12px calc(var(--nb)+12px);min-height:100dvh}
+.pg.active{display:block}
+
+/* typography */
+.sh{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin:16px 0 7px}
+.sh:first-child{margin-top:0}
+
+/* cards */
+.cd{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:13px;margin-bottom:9px;position:relative;overflow:hidden}
+
+/* stat grid */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.sg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:9px}
+.sc{background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 8px;text-align:center}
+.sv{font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:700;line-height:1}
+.sl{font-size:9px;color:var(--tx3);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.c-grn{color:var(--grn)}.c-amb{color:var(--amb)}.c-blu{color:var(--blu)}.c-pur{color:var(--pur)}.c-acc{color:var(--acc)}.c-tel{color:var(--tel)}.c-red{color:var(--red)}
+
+/* pills */
+.pi{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.pi.grn{background:var(--grn-d);color:var(--grn)}.pi.amb{background:var(--amb-d);color:var(--amb)}.pi.blu{background:var(--blu-d);color:var(--blu)}.pi.pur{background:var(--pur-d);color:var(--pur)}.pi.red{background:var(--red-d);color:var(--red)}.pi.tel{background:var(--tel-d);color:var(--tel)}.pi.acc{background:var(--acc-d);color:var(--acc)}.pi.gray{background:var(--sur3);color:var(--tx2)}
+
+/* progress */
+.pw{margin:5px 0}
+.pl{display:flex;justify-content:space-between;font-size:10px;color:var(--tx2);margin-bottom:3px}
+.pb{height:5px;background:var(--sur3);border-radius:3px;overflow:hidden}
+.pf{height:100%;border-radius:3px;transition:width .5s}
+.pf.grn{background:var(--grn)}.pf.amb{background:var(--amb)}.pf.tel{background:var(--tel)}.pf.blu{background:var(--blu)}.pf.red{background:var(--red)}
+
+/* date chips */
+.dc-bar{display:flex;gap:5px;overflow-x:auto;padding-bottom:5px;margin-bottom:11px;scrollbar-width:none}
+.dc-bar::-webkit-scrollbar{display:none}
+.dc{flex-shrink:0;background:var(--sur2);border:1px solid var(--bdr);border-radius:7px;padding:5px 11px;font-size:11px;font-weight:500;color:var(--tx2);cursor:pointer;white-space:nowrap;transition:all .15s}
+.dc.active{background:var(--acc-d);border-color:var(--acc);color:var(--acc)}
+
+/* search */
+.sb{display:flex;gap:7px;margin-bottom:11px}
+.si{flex:1;background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:8px 11px;color:var(--tx);font-family:'Noto Sans',sans-serif;font-size:13px;outline:none}
+.si::placeholder{color:var(--tx3)}
+.si:focus{border-color:var(--acc)}
+.fb{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:8px 11px;color:var(--tx2);font-size:12px;cursor:pointer;white-space:nowrap;font-family:'Noto Sans',sans-serif}
+.fb.active{border-color:var(--acc);color:var(--acc);background:var(--acc-d)}
+
+/* slip cards */
+.sk{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.sk:active{border-color:var(--acc)}
+.sk-h{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px 8px;background:var(--sur2);border-bottom:1px solid var(--bdr2)}
+.sk-no{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--acc)}
+.sk-tr{font-size:11px;color:var(--tx2);margin-top:1px}
+.sk-b{padding:9px 12px}
+.sk-r{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid var(--bdr2)}
+.sk-r:last-child{border-bottom:none}
+.sk-l{font-size:11px;color:var(--tx2)}
+.sk-v{font-size:13px;font-weight:500;font-family:'Rajdhani',sans-serif}
+
+/* forms */
+.fg{margin-bottom:13px}
+.fl{font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:block}
+.fi,.fs{width:100%;background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:9px 11px;color:var(--tx);font-family:'Noto Sans',sans-serif;font-size:14px;outline:none;appearance:none}
+.fi:focus,.fs:focus{border-color:var(--acc)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fc{background:var(--sur3);border:1px solid var(--bdr2);border-radius:8px;padding:9px 11px;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:600;color:var(--amb)}
+.fc.grn{color:var(--grn)}.fc.tel{color:var(--tel)}.fc.acc{color:var(--acc)}
+
+/* buttons */
+.btn{width:100%;padding:12px;border-radius:var(--r);border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:.4px;transition:opacity .15s;margin-bottom:9px}
+.btn:active{opacity:.8}
+.btn-p{background:var(--acc);color:#fff}
+.btn-s{background:var(--sur2);color:var(--tx2);border:1px solid var(--bdr)}
+.btn-e{background:var(--blu-d);color:var(--blu);border:1px solid var(--blu)}
+.btn-sm{width:auto;padding:6px 14px;font-size:12px;border-radius:6px;margin-bottom:0;display:inline-block}
+
+/* tabs */
+.tabs{display:flex;background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--r);padding:3px;margin-bottom:13px}
+.tab{flex:1;padding:6px 3px;border-radius:7px;border:none;background:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--tx3);transition:all .15s;letter-spacing:.3px}
+.tab.active{background:var(--acc);color:#fff}
+
+/* chart */
+.bc{display:flex;align-items:flex-end;gap:3px;height:65px;margin:5px 0 2px}
+.bc-c{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bc-b{width:100%;border-radius:3px 3px 0 0;min-height:3px}
+.bc-l{font-size:8px;color:var(--tx3);white-space:nowrap}
+
+/* var dot */
+.vd{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px}
+
+/* divider */
+.dv{height:1px;background:var(--bdr2);margin:10px 0}
+
+/* detail grid */
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:7px 0}
+.db{background:var(--sur3);border:1px solid var(--bdr2);border-radius:8px;padding:9px}
+.db-h{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);font-weight:600;margin-bottom:6px}
+.kv{display:flex;justify-content:space-between;padding:2px 0}
+.kk{font-size:11px;color:var(--tx2)}
+.kv-v{font-size:12px;font-weight:600;font-family:'Rajdhani',sans-serif}
+
+/* formula chain */
+.fch{display:flex;align-items:center;gap:3px;flex-wrap:wrap;background:var(--sur3);border-radius:7px;padding:7px 9px;margin:6px 0}
+.fb2{background:var(--sur2);border:1px solid var(--bdr);border-radius:5px;padding:3px 7px;font-size:11px;font-weight:600}
+.fb2.r{background:var(--amb-d);border-color:var(--amb);color:var(--amb)}
+.fop{font-size:14px;color:var(--tx3);font-weight:700}
+
+/* modal */
+.mo{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(3px);align-items:flex-end}
+.mo.open{display:flex}
+.md{background:var(--sur);border:1px solid var(--bdr);border-radius:16px 16px 0 0;width:100%;max-height:92dvh;overflow-y:auto;padding:18px 14px 28px;animation:su .25s ease}
+@keyframes su{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mh{width:36px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 14px}
+.mt{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;margin-bottom:14px}
+
+/* ledger */
+.ledger-row{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--bdr2);gap:8px}
+.ledger-row:last-child{border-bottom:none}
+.lr-no{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--acc);min-width:42px}
+.lr-info{flex:1;min-width:0}
+.lr-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr-sub{font-size:10px;color:var(--tx3)}
+.lr-wt{text-align:right;min-width:70px}
+.lr-wt-val{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700}
+.lr-wt-lbl{font-size:9px;color:var(--tx3)}
+.lr-amt{text-align:right;min-width:80px}
+.lr-amt-val{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--grn)}
+.lr-amt-lbl{font-size:9px;color:var(--tx3)}
+
+/* session row */
+.ses-row{background:var(--sur3);border:1px solid var(--bdr2);border-radius:8px;padding:9px 11px;margin-bottom:6px;position:relative}
+.ses-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.ses-no{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--tel)}
+.ses-del{background:var(--red-d);color:var(--red);border:1px solid var(--red);border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:'Noto Sans',sans-serif}
+.ses-edit{background:var(--blu-d);color:var(--blu);border:1px solid var(--blu);border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:'Noto Sans',sans-serif;margin-right:4px}
+
+/* remaining card */
+.rem-card{border-left:3px solid;padding:9px 11px;border-radius:0 8px 8px 0;margin-bottom:7px;background:var(--sur2)}
+.rem-card.grn{border-color:var(--grn)}.rem-card.amb{border-color:var(--amb)}.rem-card.red{border-color:var(--red)}
+
+/* toast */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--grn-d);border:1px solid var(--grn);color:var(--grn);padding:7px 16px;border-radius:20px;font-size:12px;font-weight:500;z-index:300;display:none;white-space:nowrap}
+.toast.show{display:block;animation:fio 2.2s ease forwards}
+@keyframes fio{0%{opacity:0;transform:translateX(-50%) translateY(8px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}80%{opacity:1}100%{opacity:0}}
+
+.empty{text-align:center;padding:36px 16px;color:var(--tx3);font-size:12px}
+</style>
+</head>
+<body>
+<div class="tb">
+  <div class="tb-logo">🌾 WHEAT INWARD <span>2026</span></div>
+  <div class="tb-badge" id="topBadge">124 Slips</div>
+</div>
+
+<div id="pgDash" class="pg active"></div>
+<div id="pgSlips" class="pg"></div>
+<div id="pgAdd" class="pg"></div>
+<div id="pgGrade" class="pg"></div>
+<div id="pgLedger" class="pg"></div>
+
+<nav class="nav">
+  <button class="nb active" onclick="nav('Dash',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dash</button>
+  <button class="nb" onclick="nav('Slips',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Slips</button>
+  <button class="nb" onclick="nav('Add',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add</button>
+  <button class="nb" onclick="nav('Grade',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grade</button>
+  <button class="nb" onclick="nav('Ledger',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Ledger</button>
+</nav>
+
+<div class="mo" id="modal" onclick="closeModal()">
+  <div class="md" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const BASE = [{"sno": 1, "slipno": 1317, "truck": "JOHN GOPAL", "first_wt": 10135, "second_wt": 4640, "net_wt": 5495, "date": "2026-03-25", "time": "11:31", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 54.95, "bouncing": 0.18, "net_weight": 54.77, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-03-27", "wt_recpt": 468.8, "graded_bags": 743, "graded_bag_size": 55, "total_graded": 408.65, "graded_loose": 0.0, "undersize": 57.21, "final_graded": 465.86, "diff_grading": -2.94, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -410.91, "rem_packing": 408.65}, {"sno": 2, "slipno": 1318, "truck": "JOHN 2", "first_wt": 10775, "second_wt": 5000, "net_wt": 5775, "date": "2026-03-25", "time": "11:33", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 57.75, "bouncing": 0.19, "net_weight": 57.56, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 57.75, "rem_packing": null}, {"sno": 3, "slipno": 1319, "truck": "MP13AE0697", "first_wt": 10170, "second_wt": 4415, "net_wt": 5755, "date": "2026-03-25", "time": "11:34", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 57.55, "bouncing": 0.19, "net_weight": 57.36, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 57.55, "rem_packing": null}, {"sno": 4, "slipno": 1320, "truck": "JOHN 3", "first_wt": 9935, "second_wt": 4175, "net_wt": 5760, "date": "2026-03-25", "time": "11:36", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 57.6, "bouncing": 0.19, "net_weight": 57.41, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 57.6, "rem_packing": null}, {"sno": 5, "slipno": 1321, "truck": "MAHINDRA GOPAL", "first_wt": 9165, "second_wt": 3705, "net_wt": 5460, "date": "2026-03-25", "time": "11:57", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 54.6, "bouncing": 0.18, "net_weight": 54.42, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 54.6, "rem_packing": null}, {"sno": 6, "slipno": 1322, "truck": "FARMTRAC", "first_wt": 9505, "second_wt": 4190, "net_wt": 5315, "date": "2026-03-25", "time": "12:48", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 53.15, "bouncing": 0.18, "net_weight": 52.97, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 53.15, "rem_packing": null}, {"sno": 7, "slipno": 1323, "truck": "MAHINDRA", "first_wt": 8100, "second_wt": 3770, "net_wt": 4330, "date": "2026-03-26", "time": "10:09", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 43.3, "bouncing": 0.14, "net_weight": 43.16, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 43.3, "rem_packing": null}, {"sno": 8, "slipno": 1324, "truck": "JOHN GOPAL", "first_wt": 9025, "second_wt": 4590, "net_wt": 4435, "date": "2026-03-26", "time": "10:20", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 44.35, "bouncing": 0.15, "net_weight": 44.2, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 44.35, "rem_packing": null}, {"sno": 9, "slipno": 1325, "truck": "DEERE GOPAL", "first_wt": 8730, "second_wt": 4175, "net_wt": 4555, "date": "2026-03-26", "time": "10:21", "variety": "LOK 1", "supplier": "GOPAL BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 45.55, "bouncing": 0.15, "net_weight": 45.4, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 45.55, "rem_packing": null}, {"sno": 10, "slipno": 1326, "truck": "MP09GF4480", "first_wt": 18900, "second_wt": 5290, "net_wt": 13610, "date": "2026-03-26", "time": "10:27", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 136.1, "bouncing": 0.45, "net_weight": 135.65, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 136.1, "rem_packing": null}, {"sno": 11, "slipno": 1327, "truck": "SWARAJ BADRILAL", "first_wt": 9790, "second_wt": 4420, "net_wt": 5370, "date": "2026-03-26", "time": "12:34", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 53.7, "bouncing": 0.18, "net_weight": 53.52, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-01", "wt_recpt": 513.2, "graded_bags": 805, "graded_bag_size": 55, "total_graded": 442.75, "graded_loose": 0.0, "undersize": 72.82, "final_graded": 515.57, "diff_grading": 2.37, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -461.87, "rem_packing": 442.75}, {"sno": 12, "slipno": 1328, "truck": "JOHN BADRILAL", "first_wt": 10810, "second_wt": 5020, "net_wt": 5790, "date": "2026-03-26", "time": "17:28", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 57.9, "bouncing": 0.19, "net_weight": 57.71, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 57.9, "rem_packing": null}, {"sno": 13, "slipno": 1329, "truck": "FARM BADRILAL", "first_wt": 9345, "second_wt": 4215, "net_wt": 5130, "date": "2026-03-26", "time": "17:48", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 51.3, "bouncing": 0.17, "net_weight": 51.13, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 51.3, "rem_packing": null}, {"sno": 14, "slipno": 1330, "truck": "MP13AG9129", "first_wt": 5330, "second_wt": 2415, "net_wt": 2915, "date": "2026-03-27", "time": "10:10", "variety": "GW-543", "supplier": "DILIPSINGH GOYALAKHURD", "bags": 54, "size": 0.6, "bag_wgt": 32.0, "wgt_bag": 28.83, "bouncing": 0.1, "net_weight": 28.73, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-06", "wt_recpt": 28.82, "graded_bags": 45, "graded_bag_size": 55, "total_graded": 25.08, "graded_loose": 0.33, "undersize": 3.76, "final_graded": 28.84, "diff_grading": 0.02, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -0.01, "rem_packing": 25.08}, {"sno": 15, "slipno": 1331, "truck": "JOHN GOYLA", "first_wt": 8715, "second_wt": 4085, "net_wt": 4630, "date": "2026-03-27", "time": "10:11", "variety": "GW-555", "supplier": "DILIPSINGH GOYALAKHURD", "bags": 88, "size": 0.6, "bag_wgt": 53.0, "wgt_bag": 45.77, "bouncing": 0.15, "net_weight": 45.62, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 45.77, "rem_packing": null}, {"sno": 16, "slipno": 1332, "truck": "EICHER", "first_wt": 8285, "second_wt": 4010, "net_wt": 4275, "date": "2026-03-27", "time": "10:34", "variety": "LOK 1", "supplier": "KARANSINGH BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 42.75, "bouncing": 0.14, "net_weight": 42.61, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-03-28", "wt_recpt": 127.25, "graded_bags": 206, "graded_bag_size": 55, "total_graded": 113.3, "graded_loose": 0.0, "undersize": 13.77, "final_graded": 127.07, "diff_grading": -0.18, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -84.32, "rem_packing": 113.3}, {"sno": 17, "slipno": 1333, "truck": "POWTERTRAC", "first_wt": 8325, "second_wt": 3800, "net_wt": 4525, "date": "2026-03-27", "time": "10:35", "variety": "LOK 1", "supplier": "KARANSINGH BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 45.25, "bouncing": 0.15, "net_weight": 45.1, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 45.25, "rem_packing": null}, {"sno": 18, "slipno": 1334, "truck": "FARM KARAN", "first_wt": 8105, "second_wt": 4180, "net_wt": 3925, "date": "2026-03-27", "time": "10:46", "variety": "LOK 1", "supplier": "KARANSINGH BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 39.25, "bouncing": 0.13, "net_weight": 39.12, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 39.25, "rem_packing": null}, {"sno": 19, "slipno": 1335, "truck": "FARM JEEVAN", "first_wt": 9405, "second_wt": 4145, "net_wt": 5260, "date": "2026-03-27", "time": "14:36", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 52.6, "bouncing": 0.18, "net_weight": 52.42, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 52.6, "rem_packing": null}, {"sno": 20, "slipno": 1336, "truck": "JOHN JEEVAN", "first_wt": 9635, "second_wt": 4175, "net_wt": 5460, "date": "2026-03-27", "time": "14:38", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 54.6, "bouncing": 0.18, "net_weight": 54.42, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 54.6, "rem_packing": null}, {"sno": 21, "slipno": 1337, "truck": "FARM JEEVAN", "first_wt": 9410, "second_wt": 4200, "net_wt": 5210, "date": "2026-03-28", "time": "10:29", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 52.1, "bouncing": 0.17, "net_weight": 51.93, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 52.1, "rem_packing": null}, {"sno": 22, "slipno": 1338, "truck": "JOHN JEEVAN", "first_wt": 9665, "second_wt": 4175, "net_wt": 5490, "date": "2026-03-28", "time": "10:56", "variety": "LOK 1", "supplier": "BADRILALJI BAGODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 54.9, "bouncing": 0.18, "net_weight": 54.72, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 54.9, "rem_packing": null}, {"sno": 23, "slipno": 1339, "truck": "MP41GA1333", "first_wt": 14955, "second_wt": 3755, "net_wt": 11200, "date": "2026-03-30", "time": "09:57", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 181, "size": 0.6, "bag_wgt": 109.0, "wgt_bag": 110.91, "bouncing": 0.37, "net_weight": 110.54, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 110.91, "rem_packing": null}, {"sno": 24, "slipno": 1340, "truck": "MP13ZF1322", "first_wt": 10725, "second_wt": 3260, "net_wt": 7465, "date": "2026-03-30", "time": "09:58", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 121, "size": 0.6, "bag_wgt": 73.0, "wgt_bag": 73.92, "bouncing": 0.25, "net_weight": 73.67, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 73.92, "rem_packing": null}, {"sno": 25, "slipno": 1341, "truck": "JOHN SHARMA", "first_wt": 9205, "second_wt": 3675, "net_wt": 5530, "date": "2026-03-30", "time": "10:00", "variety": "HI-1650", "supplier": "BHAGIRATH SHARMA AALAMPUR UDANA", "bags": 95, "size": 0.6, "bag_wgt": 57.0, "wgt_bag": 54.73, "bouncing": 0.18, "net_weight": 54.55, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 54.73, "rem_packing": null}, {"sno": 26, "slipno": 1342, "truck": "SWARAJ JAIN", "first_wt": 10875, "second_wt": 4350, "net_wt": 6525, "date": "2026-03-30", "time": "10:01", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 104, "size": 0.6, "bag_wgt": 62.0, "wgt_bag": 64.63, "bouncing": 0.22, "net_weight": 64.41, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 64.63, "rem_packing": null}, {"sno": 27, "slipno": 1343, "truck": "SHARMA2", "first_wt": 10015, "second_wt": 4135, "net_wt": 5880, "date": "2026-03-30", "time": "10:03", "variety": "HI-1650", "supplier": "BHAGIRATH SHARMA AALAMPUR UDANA", "bags": 100, "size": 0.6, "bag_wgt": 60.0, "wgt_bag": 58.2, "bouncing": 0.2, "net_weight": 58.0, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 58.2, "rem_packing": null}, {"sno": 28, "slipno": 1344, "truck": "MAHINDRA SHARMA", "first_wt": 10000, "second_wt": 4060, "net_wt": 5940, "date": "2026-03-30", "time": "10:05", "variety": "HI-1650", "supplier": "BHAGIRATH SHARMA AALAMPUR UDANA", "bags": 100, "size": 0.6, "bag_wgt": 60.0, "wgt_bag": 58.8, "bouncing": 0.2, "net_weight": 58.6, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 58.8, "rem_packing": null}, {"sno": 29, "slipno": 1345, "truck": "SONALIKA SHARMA", "first_wt": 8940, "second_wt": 3870, "net_wt": 5070, "date": "2026-03-30", "time": "10:07", "variety": "HI-1650", "supplier": "BHAGIRATH SHARMA AALAMPUR UDANA", "bags": 84, "size": 0.6, "bag_wgt": 50.0, "wgt_bag": 50.2, "bouncing": 0.17, "net_weight": 50.03, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 50.2, "rem_packing": null}, {"sno": 30, "slipno": 1346, "truck": "MP13ZH5877", "first_wt": 10285, "second_wt": 4055, "net_wt": 6230, "date": "2026-03-30", "time": "10:09", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 101, "size": 0.6, "bag_wgt": 61.0, "wgt_bag": 61.69, "bouncing": 0.21, "net_weight": 61.48, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 61.69, "rem_packing": null}, {"sno": 31, "slipno": 1347, "truck": "YUVO JAIN", "first_wt": 9275, "second_wt": 3715, "net_wt": 5560, "date": "2026-03-30", "time": "10:10", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 91, "size": 0.6, "bag_wgt": 55.0, "wgt_bag": 55.05, "bouncing": 0.19, "net_weight": 54.86, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 55.05, "rem_packing": null}, {"sno": 32, "slipno": 1348, "truck": "SONA JAIN", "first_wt": 10215, "second_wt": 4030, "net_wt": 6185, "date": "2026-03-30", "time": "10:12", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 101, "size": 0.6, "bag_wgt": 61.0, "wgt_bag": 61.24, "bouncing": 0.21, "net_weight": 61.03, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 61.24, "rem_packing": null}, {"sno": 33, "slipno": 1349, "truck": "TIGER JAIN", "first_wt": 10485, "second_wt": 4130, "net_wt": 6355, "date": "2026-03-30", "time": "10:14", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 101, "size": 0.6, "bag_wgt": 61.0, "wgt_bag": 62.94, "bouncing": 0.21, "net_weight": 62.73, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 62.94, "rem_packing": null}, {"sno": 34, "slipno": 1350, "truck": "DI50 JAIN", "first_wt": 10340, "second_wt": 4165, "net_wt": 6175, "date": "2026-03-30", "time": "10:15", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 103, "size": 0.6, "bag_wgt": 62.0, "wgt_bag": 61.13, "bouncing": 0.21, "net_weight": 60.92, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 61.13, "rem_packing": null}, {"sno": 35, "slipno": 1351, "truck": "585 JAIN", "first_wt": 8735, "second_wt": 3920, "net_wt": 4815, "date": "2026-03-30", "time": "10:16", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 81, "size": 0.6, "bag_wgt": 49.0, "wgt_bag": 47.66, "bouncing": 0.16, "net_weight": 47.5, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 47.66, "rem_packing": null}, {"sno": 36, "slipno": 1352, "truck": "MP13ZF1322", "first_wt": 11445, "second_wt": 3265, "net_wt": 8180, "date": "2026-03-30", "time": "16:05", "variety": "HI-1650", "supplier": "RAMLAL JAIN AALAMPUR UDANA", "bags": 138, "size": 0.6, "bag_wgt": 83.0, "wgt_bag": 80.97, "bouncing": 0.27, "net_weight": 80.7, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 80.97, "rem_packing": null}, {"sno": 37, "slipno": 1354, "truck": "JOHN", "first_wt": 7410, "second_wt": 3900, "net_wt": 3510, "date": "2026-03-31", "time": "12:21", "variety": "GW-513", "supplier": "MEHAMOODBHAI BADODIYAKAZI", "bags": 65, "size": 0, "bag_wgt": 0, "wgt_bag": 35.1, "bouncing": 0.12, "net_weight": 34.98, "moisture": null, "germination": null, "remark": null, "rate": 3000, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 35.1, "rem_packing": null}, {"sno": 38, "slipno": 1355, "truck": "SWARAJ", "first_wt": 8390, "second_wt": 3895, "net_wt": 4495, "date": "2026-03-31", "time": "12:22", "variety": "GW-513", "supplier": "MEHAMOODBHAI BADODIYAKAZI", "bags": 86, "size": 0, "bag_wgt": 0, "wgt_bag": 44.95, "bouncing": 0.15, "net_weight": 44.8, "moisture": null, "germination": null, "remark": null, "rate": 3000, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 44.95, "rem_packing": null}, {"sno": 39, "slipno": 1357, "truck": "NEW HOLLAND", "first_wt": 8320, "second_wt": 3780, "net_wt": 4540, "date": "2026-04-01", "time": "11:41", "variety": "PUSA MANAV", "supplier": "DASHRATH PANDYA DAUKHEDI", "bags": 71, "size": 0.6, "bag_wgt": 43.0, "wgt_bag": 44.97, "bouncing": 0.15, "net_weight": 44.82, "moisture": null, "germination": null, "remark": "PATEL", "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 44.97, "rem_packing": null}, {"sno": 40, "slipno": 1358, "truck": "DL1M47281", "first_wt": 15750, "second_wt": 4670, "net_wt": 11080, "date": "2026-04-01", "time": "17:27", "variety": "GW-543", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 110.8, "bouncing": 0.37, "net_weight": 110.43, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-06", "wt_recpt": 504.55, "graded_bags": 834, "graded_bag_size": 55, "total_graded": 458.7, "graded_loose": 0.0, "undersize": 41.83, "final_graded": 500.53, "diff_grading": -4.02, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -389.73, "rem_packing": 458.7}, {"sno": 41, "slipno": 1359, "truck": "NEW HOLLAND", "first_wt": 7040, "second_wt": 3785, "net_wt": 3255, "date": "2026-04-02", "time": "11:42", "variety": "PUSA MANAV", "supplier": "DASHRATH PANDYA DAUKHEDI", "bags": 50, "size": 0.6, "bag_wgt": 30.0, "wgt_bag": 32.25, "bouncing": 0.11, "net_weight": 32.14, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 32.25, "rem_packing": null}, {"sno": 42, "slipno": 1360, "truck": "DL1M47281", "first_wt": 16375, "second_wt": 4660, "net_wt": 11715, "date": "2026-04-02", "time": "13:30", "variety": "GW-543", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 117.15, "bouncing": 0.39, "net_weight": 116.76, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 117.15, "rem_packing": null}, {"sno": 43, "slipno": 1361, "truck": "MP09GF0868", "first_wt": 14190, "second_wt": 4380, "net_wt": 9810, "date": "2026-04-02", "time": "17:23", "variety": "GW-543", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 98.1, "bouncing": 0.33, "net_weight": 97.77, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 98.1, "rem_packing": null}, {"sno": 44, "slipno": 1364, "truck": "DL1M47281", "first_wt": 17635, "second_wt": 4645, "net_wt": 12990, "date": "2026-04-03", "time": "12:06", "variety": "GW-543", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 129.9, "bouncing": 0.43, "net_weight": 129.47, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 129.9, "rem_packing": null}, {"sno": 45, "slipno": 1365, "truck": "JOHN SANDEEP", "first_wt": 9105, "second_wt": 4245, "net_wt": 4860, "date": "2026-04-03", "time": "14:16", "variety": "GW-543", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 48.6, "bouncing": 0.16, "net_weight": 48.44, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 48.6, "rem_packing": null}, {"sno": 46, "slipno": 1366, "truck": "DL1M47281", "first_wt": 16810, "second_wt": 4655, "net_wt": 12155, "date": "2026-04-04", "time": "10:04", "variety": "GW-543", "supplier": "HAKAMSINGH RALAYTA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 121.55, "bouncing": 0.41, "net_weight": 121.14, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-06", "wt_recpt": 423.2, "graded_bags": 710, "graded_bag_size": 55, "total_graded": 390.5, "graded_loose": 0.0, "undersize": 34.95, "final_graded": 425.45, "diff_grading": 2.25, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -303.9, "rem_packing": 390.5}, {"sno": 47, "slipno": 1367, "truck": "JOHN NILESH", "first_wt": 11000, "second_wt": 4115, "net_wt": 6885, "date": "2026-04-04", "time": "11:08", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 112, "size": 0.6, "bag_wgt": 67.0, "wgt_bag": 68.18, "bouncing": 0.23, "net_weight": 67.95, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 68.18, "rem_packing": null}, {"sno": 48, "slipno": 1368, "truck": "NEW HOLLAND", "first_wt": 7835, "second_wt": 3720, "net_wt": 4115, "date": "2026-04-04", "time": "12:01", "variety": "GW-543", "supplier": "HAKAMSINGH RALAYTA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 41.15, "bouncing": 0.14, "net_weight": 41.01, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 41.15, "rem_packing": null}, {"sno": 49, "slipno": 1369, "truck": "3600 MAHENDRA", "first_wt": 6940, "second_wt": 3780, "net_wt": 3160, "date": "2026-04-04", "time": "12:05", "variety": "PUSA MANAV", "supplier": "DASHRATH PANDYA DAUKHEDI", "bags": 50, "size": 0.6, "bag_wgt": 30.0, "wgt_bag": 31.3, "bouncing": 0.11, "net_weight": 31.19, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 31.3, "rem_packing": null}, {"sno": 50, "slipno": 1370, "truck": "NEW HOLLAND", "first_wt": 7475, "second_wt": 3480, "net_wt": 3995, "date": "2026-04-04", "time": "15:06", "variety": "GW-543", "supplier": "HAKAMSINGH RALAYTA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 39.95, "bouncing": 0.13, "net_weight": 39.82, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 39.95, "rem_packing": null}, {"sno": 51, "slipno": 1371, "truck": "DL1M47281", "first_wt": 16845, "second_wt": 4670, "net_wt": 12175, "date": "2026-04-05", "time": "10:15", "variety": "GW-543", "supplier": "HAKAMSINGH RALAYTA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 121.75, "bouncing": 0.41, "net_weight": 121.34, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 121.75, "rem_packing": null}, {"sno": 52, "slipno": 1372, "truck": "DL1M47281", "first_wt": 14540, "second_wt": 4660, "net_wt": 9880, "date": "2026-04-05", "time": "16:34", "variety": "GW-543", "supplier": "HAKAMSINGH RALAYTA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 98.8, "bouncing": 0.33, "net_weight": 98.47, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 98.8, "rem_packing": null}, {"sno": 53, "slipno": 1373, "truck": 485, "first_wt": 11280, "second_wt": 4210, "net_wt": 7070, "date": "2026-04-06", "time": "09:58", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 120, "size": 0.6, "bag_wgt": 72.0, "wgt_bag": 69.98, "bouncing": 0.24, "net_weight": 69.74, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 69.98, "rem_packing": null}, {"sno": 54, "slipno": 1374, "truck": "JOHN NILESH", "first_wt": 11280, "second_wt": 4130, "net_wt": 7150, "date": "2026-04-06", "time": "11:07", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 114, "size": 0.6, "bag_wgt": 68.0, "wgt_bag": 70.82, "bouncing": 0.24, "net_weight": 70.58, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 70.82, "rem_packing": null}, {"sno": 55, "slipno": 1375, "truck": "MP09GE7627", "first_wt": 16760, "second_wt": 4325, "net_wt": 12435, "date": "2026-04-06", "time": "13:58", "variety": "GW-322", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 124.35, "bouncing": 0.41, "net_weight": 123.94, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-07", "wt_recpt": 124.35, "graded_bags": 193, "graded_bag_size": 55, "total_graded": 106.15, "graded_loose": 0.0, "undersize": 16.28, "final_graded": 122.43, "diff_grading": -1.92, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 1.92, "rem_packing": 106.15}, {"sno": 56, "slipno": 1376, "truck": "DL1M47281", "first_wt": 16985, "second_wt": 4650, "net_wt": 12335, "date": "2026-04-06", "time": "16:15", "variety": "GW-322", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 123.35, "bouncing": 0.41, "net_weight": 122.94, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-08", "wt_recpt": 314.5, "graded_bags": 505, "graded_bag_size": 55, "total_graded": 277.99, "graded_loose": 0.24, "undersize": 36.26, "final_graded": 314.25, "diff_grading": -0.25, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -190.9, "rem_packing": 277.99}, {"sno": 57, "slipno": 1377, "truck": "DL1M47281", "first_wt": 12970, "second_wt": 4675, "net_wt": 8295, "date": "2026-04-07", "time": "11:14", "variety": "GW-322", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 82.95, "bouncing": 0.28, "net_weight": 82.67, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 82.95, "rem_packing": null}, {"sno": 58, "slipno": 1378, "truck": "JOHN NILESH", "first_wt": 11400, "second_wt": 4190, "net_wt": 7210, "date": "2026-04-07", "time": "12:34", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 123, "size": 0.6, "bag_wgt": 74.0, "wgt_bag": 71.36, "bouncing": 0.24, "net_weight": 71.12, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 71.36, "rem_packing": null}, {"sno": 59, "slipno": 1379, "truck": "JOHN NILESH", "first_wt": 11360, "second_wt": 4105, "net_wt": 7255, "date": "2026-04-07", "time": "13:39", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 122, "size": 0.6, "bag_wgt": 73.0, "wgt_bag": 71.82, "bouncing": 0.24, "net_weight": 71.58, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 71.82, "rem_packing": null}, {"sno": 60, "slipno": 1380, "truck": "DL1M47281", "first_wt": 15475, "second_wt": 4655, "net_wt": 10820, "date": "2026-04-07", "time": "17:47", "variety": "GW-322", "supplier": "SANDEEP NIMBODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 108.2, "bouncing": 0.36, "net_weight": 107.84, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 108.2, "rem_packing": null}, {"sno": 61, "slipno": 1381, "truck": 485, "first_wt": 11590, "second_wt": 4135, "net_wt": 7455, "date": "2026-04-08", "time": "11:20", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 124, "size": 0.6, "bag_wgt": 74.0, "wgt_bag": 73.81, "bouncing": 0.25, "net_weight": 73.56, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 73.81, "rem_packing": null}, {"sno": 62, "slipno": 1382, "truck": "JOHN", "first_wt": 11615, "second_wt": 4195, "net_wt": 7420, "date": "2026-04-08", "time": "11:56", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 124, "size": 0.6, "bag_wgt": 74.0, "wgt_bag": 73.46, "bouncing": 0.25, "net_weight": 73.21, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 73.46, "rem_packing": null}, {"sno": 63, "slipno": 1383, "truck": "MP09GF0898", "first_wt": 15810, "second_wt": 4370, "net_wt": 11440, "date": "2026-04-08", "time": "14:36", "variety": "HI-8713 PUSA MANGAL", "supplier": "PAWAN JAT MUNDAT", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 114.4, "bouncing": 0.38, "net_weight": 114.02, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-10", "wt_recpt": 466.25, "graded_bags": 774, "graded_bag_size": 55, "total_graded": 425.7, "graded_loose": 0.0, "undersize": 39.67, "final_graded": 465.37, "diff_grading": -0.88, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -350.97, "rem_packing": 425.7}, {"sno": 64, "slipno": 1384, "truck": "DL1M47281", "first_wt": 16875, "second_wt": 4660, "net_wt": 12215, "date": "2026-04-08", "time": "16:00", "variety": "HI-8713 PUSA MANGAL", "supplier": "PAWAN JAT MUNDAT", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 122.15, "bouncing": 0.41, "net_weight": 121.74, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 122.15, "rem_packing": null}, {"sno": 65, "slipno": 1385, "truck": "MP09GF0868", "first_wt": 15240, "second_wt": 4380, "net_wt": 10860, "date": "2026-04-09", "time": "14:31", "variety": "HI-8713 PUSA MANGAL", "supplier": "PAWAN JAT MUNDAT", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 108.6, "bouncing": 0.36, "net_weight": 108.24, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 108.6, "rem_packing": null}, {"sno": 66, "slipno": 1386, "truck": "DL1M47281", "first_wt": 16795, "second_wt": 4685, "net_wt": 12110, "date": "2026-04-09", "time": "16:21", "variety": "HI-8713 PUSA MANGAL", "supplier": "PAWAN JAT MUNDAT", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 121.1, "bouncing": 0.4, "net_weight": 120.7, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 121.1, "rem_packing": null}, {"sno": 67, "slipno": 1387, "truck": "JOHN NILESH", "first_wt": 11730, "second_wt": 4165, "net_wt": 7565, "date": "2026-04-09", "time": "18:12", "variety": 3385, "supplier": "NILESH YADAV BIRGODA", "bags": 124, "size": 0.6, "bag_wgt": 74.0, "wgt_bag": 74.91, "bouncing": 0.25, "net_weight": 74.66, "moisture": null, "germination": null, "remark": null, "rate": 2750, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 74.91, "rem_packing": null}, {"sno": 68, "slipno": 1388, "truck": "MP09GF0868", "first_wt": 15160, "second_wt": 4375, "net_wt": 10785, "date": "2026-04-10", "time": "13:39", "variety": "HI-8759 PUSA TEJAS", "supplier": "INDARSINGH RAMGARH", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 107.85, "bouncing": 0.36, "net_weight": 107.49, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 107.85, "rem_packing": null}, {"sno": 69, "slipno": 1389, "truck": "MP42ZC5532", "first_wt": 14880, "second_wt": 5270, "net_wt": 9610, "date": "2026-04-10", "time": "14:17", "variety": "PRADHAN", "supplier": "IBRAHIM KHAN SHAJAPUR", "bags": 190, "size": 0.6, "bag_wgt": 114.0, "wgt_bag": 94.96, "bouncing": 0.32, "net_weight": 94.64, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 94.96, "rem_packing": null}, {"sno": 70, "slipno": 1390, "truck": "MP42AA4955", "first_wt": 9640, "second_wt": 4090, "net_wt": 5550, "date": "2026-04-10", "time": "14:20", "variety": "PRADHAN", "supplier": "IBRAHIM KHAN SHAJAPUR", "bags": 110, "size": 0.6, "bag_wgt": 66.0, "wgt_bag": 54.84, "bouncing": 0.18, "net_weight": 54.66, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 54.84, "rem_packing": null}, {"sno": 71, "slipno": 1391, "truck": "SONA SANDEEP", "first_wt": 9785, "second_wt": 4235, "net_wt": 5550, "date": "2026-04-10", "time": "14:56", "variety": "HI-8759 PUSA TEJAS", "supplier": "INDARSINGH RAMGARH", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 55.5, "bouncing": 0.18, "net_weight": 55.32, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-11", "wt_recpt": 284.4, "graded_bags": 464, "graded_bag_size": 55, "total_graded": 255.2, "graded_loose": 0.0, "undersize": 26.79, "final_graded": 281.99, "diff_grading": -2.41, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -226.49, "rem_packing": 255.2}, {"sno": 72, "slipno": 1392, "truck": "DL1M47281", "first_wt": 16775, "second_wt": 4670, "net_wt": 12105, "date": "2026-04-10", "time": "15:26", "variety": "HI-8759 PUSA TEJAS", "supplier": "INDARSINGH RAMGARH", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 121.05, "bouncing": 0.4, "net_weight": 120.65, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 121.05, "rem_packing": null}, {"sno": 73, "slipno": 1394, "truck": "MP13ZY3240", "first_wt": 15520, "second_wt": 5180, "net_wt": 10340, "date": "2026-04-11", "time": "12:01", "variety": "HI-8759 PUSA TEJAS", "supplier": "RAMCHANDRA JITARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 103.4, "bouncing": 0.34, "net_weight": 103.06, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 103.4, "rem_packing": null}, {"sno": 74, "slipno": 1395, "truck": "SONALIKA", "first_wt": 9045, "second_wt": 3925, "net_wt": 5120, "date": "2026-04-11", "time": "13:39", "variety": "HI-8759 PUSA TEJAS", "supplier": "RAMCHANDRA JITARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 51.2, "bouncing": 0.17, "net_weight": 51.03, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-13", "wt_recpt": 261.6, "graded_bags": 423, "graded_bag_size": 55, "total_graded": 232.78, "graded_loose": 0.13, "undersize": 28.16, "final_graded": 260.94, "diff_grading": -0.66, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -209.74, "rem_packing": 232.78}, {"sno": 75, "slipno": 1397, "truck": "MP13GB1398", "first_wt": 14765, "second_wt": 4065, "net_wt": 10700, "date": "2026-04-11", "time": "15:09", "variety": "HI-8759 PUSA TEJAS", "supplier": "RAMCHANDRA JITARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 107.0, "bouncing": 0.36, "net_weight": 106.64, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 107.0, "rem_packing": null}, {"sno": 76, "slipno": 1398, "truck": "MP09GF5599", "first_wt": 15730, "second_wt": 5120, "net_wt": 10610, "date": "2026-04-13", "time": "11:09", "variety": "HI-8759 PUSA TEJAS", "supplier": "VIKRAM JAT KHANDODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 106.1, "bouncing": 0.35, "net_weight": 105.75, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-14", "wt_recpt": 385.05, "graded_bags": 654, "graded_bag_size": 55, "total_graded": 359.88, "graded_loose": 0.18, "undersize": 25.12, "final_graded": 385.0, "diff_grading": -0.05, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -278.9, "rem_packing": 359.88}, {"sno": 77, "slipno": 1399, "truck": "MP13ZR0497", "first_wt": 17210, "second_wt": 4990, "net_wt": 12220, "date": "2026-04-13", "time": "11:11", "variety": "HI-8759 PUSA TEJAS", "supplier": "VIKRAM JAT KHANDODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 122.2, "bouncing": 0.41, "net_weight": 121.79, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 122.2, "rem_packing": null}, {"sno": 78, "slipno": 1400, "truck": "DL1M47281", "first_wt": 17440, "second_wt": 4660, "net_wt": 12780, "date": "2026-04-13", "time": "14:35", "variety": "HI-8850", "supplier": "SANDEEP NIMBODA", "bags": 220, "size": 0.6, "bag_wgt": 132.0, "wgt_bag": 126.48, "bouncing": 0.43, "net_weight": 126.05, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 126.48, "rem_packing": null}, {"sno": 79, "slipno": 1401, "truck": "CG04QR7499", "first_wt": 22260, "second_wt": 6585, "net_wt": 15675, "date": "2026-04-13", "time": "14:40", "variety": "HI-8759 PUSA TEJAS", "supplier": "VIKRAM JAT KHANDODA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 156.75, "bouncing": 0.52, "net_weight": 156.23, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 156.75, "rem_packing": null}, {"sno": 80, "slipno": 1402, "truck": "MP09GF0868", "first_wt": 16970, "second_wt": 4375, "net_wt": 12595, "date": "2026-04-13", "time": "17:16", "variety": "HI-8850", "supplier": "SANDEEP NIMBODA", "bags": 220, "size": 0.6, "bag_wgt": 132.0, "wgt_bag": 124.63, "bouncing": 0.42, "net_weight": 124.21, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 124.63, "rem_packing": null}, {"sno": 81, "slipno": 1403, "truck": "SWARAJ BHESLA", "first_wt": 8755, "second_wt": 4215, "net_wt": 4540, "date": "2026-04-13", "time": "18:21", "variety": "HI-8759 PUSA TEJAS", "supplier": "SHIVRAM JAT BHESLA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 45.4, "bouncing": 0.15, "net_weight": 45.25, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-14", "wt_recpt": 180.55, "graded_bags": 297, "graded_bag_size": 55, "total_graded": 163.35, "graded_loose": 0.0, "undersize": 16.32, "final_graded": 179.67, "diff_grading": -0.88, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -134.27, "rem_packing": 163.35}, {"sno": 82, "slipno": 1404, "truck": "SONALIKA BHESLA", "first_wt": 8180, "second_wt": 4030, "net_wt": 4150, "date": "2026-04-13", "time": "18:56", "variety": "HI-8759 PUSA TEJAS", "supplier": "SHIVRAM JAT BHESLA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 41.5, "bouncing": 0.14, "net_weight": 41.36, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 41.5, "rem_packing": null}, {"sno": 84, "slipno": 1405, "truck": "MP13ZR0497", "first_wt": 14330, "second_wt": 4965, "net_wt": 9365, "date": "2026-04-14", "time": "10:51", "variety": "HI-8759 PUSA TEJAS", "supplier": "SHIVRAM JAT BHESLA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 93.65, "bouncing": 0.31, "net_weight": 93.34, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 93.65, "rem_packing": null}, {"sno": 85, "slipno": 1406, "truck": "DL1M47281", "first_wt": 17200, "second_wt": 10380, "net_wt": 6820, "date": "2026-04-14", "time": "11:03", "variety": "HI-8850", "supplier": "SANDEEP NIMBODA", "bags": 118, "size": 0.6, "bag_wgt": 71.0, "wgt_bag": 67.49, "bouncing": 0.23, "net_weight": 67.26, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 67.49, "rem_packing": null}, {"sno": 86, "slipno": 1407, "truck": "DL1M47281", "first_wt": 10380, "second_wt": 4670, "net_wt": 5710, "date": "2026-04-14", "time": "11:58", "variety": "3 SR 72", "supplier": "SANDEEP NIMBODA", "bags": 102, "size": 0.6, "bag_wgt": 61.0, "wgt_bag": 56.49, "bouncing": 0.19, "net_weight": 56.3, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 56.49, "rem_packing": null}, {"sno": 87, "slipno": 1408, "truck": "MP09GF0868", "first_wt": 16580, "second_wt": 4380, "net_wt": 12200, "date": "2026-04-14", "time": "13:03", "variety": "3 SR 72", "supplier": "SANDEEP NIMBODA", "bags": 220, "size": 0.6, "bag_wgt": 132.0, "wgt_bag": 120.68, "bouncing": 0.41, "net_weight": 120.27, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 120.68, "rem_packing": null}, {"sno": 88, "slipno": 1409, "truck": 0, "first_wt": 0, "second_wt": 0, "net_wt": 0, "date": null, "time": "00:00", "variety": 0, "supplier": 0, "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 0, "bouncing": 0, "net_weight": 0, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 0.0, "rem_packing": null}, {"sno": 89, "slipno": 1410, "truck": "YUVO DINESH", "first_wt": 8215, "second_wt": 3765, "net_wt": 4450, "date": "2026-04-14", "time": "15:16", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 44.5, "bouncing": 0.15, "net_weight": 44.35, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-17", "wt_recpt": 560.95, "graded_bags": 906, "graded_bag_size": 55, "total_graded": 498.3, "graded_loose": 0.0, "undersize": 61.41, "final_graded": 559.71, "diff_grading": -1.24, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -515.21, "rem_packing": 498.3}, {"sno": 90, "slipno": 1411, "truck": "FERGUSAN DINE 1", "first_wt": 9945, "second_wt": 4535, "net_wt": 5410, "date": "2026-04-14", "time": "16:57", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 54.1, "bouncing": 0.18, "net_weight": 53.92, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 54.1, "rem_packing": null}, {"sno": 91, "slipno": 1412, "truck": "SONALIKA DINESH", "first_wt": 8405, "second_wt": 4160, "net_wt": 4245, "date": "2026-04-15", "time": "10:23", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 42.45, "bouncing": 0.14, "net_weight": 42.31, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 42.45, "rem_packing": null}, {"sno": 92, "slipno": 1413, "truck": "FER DINESH 2", "first_wt": 9945, "second_wt": 4535, "net_wt": 5410, "date": "2026-04-15", "time": "10:54", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 54.1, "bouncing": 0.18, "net_weight": 53.92, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 54.1, "rem_packing": null}, {"sno": 93, "slipno": 1414, "truck": "MASSEY DINESH", "first_wt": 9125, "second_wt": 4110, "net_wt": 5015, "date": "2026-04-15", "time": "11:16", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 50.15, "bouncing": 0.17, "net_weight": 49.98, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 50.15, "rem_packing": null}, {"sno": 94, "slipno": 1415, "truck": "HOLLAND DINESH", "first_wt": 8920, "second_wt": 4040, "net_wt": 4880, "date": "2026-04-15", "time": "11:46", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 48.8, "bouncing": 0.16, "net_weight": 48.64, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 48.8, "rem_packing": null}, {"sno": 95, "slipno": 1416, "truck": "SONALIKA DINESH", "first_wt": 8360, "second_wt": 4155, "net_wt": 4205, "date": "2026-04-15", "time": "13:14", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 42.05, "bouncing": 0.14, "net_weight": 41.91, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 42.05, "rem_packing": null}, {"sno": 96, "slipno": 1417, "truck": "MAHINDRA DINESH", "first_wt": 5350, "second_wt": 3420, "net_wt": 1930, "date": "2026-04-15", "time": "13:41", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 19.3, "bouncing": 0.06, "net_weight": 19.24, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 19.3, "rem_packing": null}, {"sno": 97, "slipno": 1418, "truck": "SONALIKA DINESH", "first_wt": 8365, "second_wt": 4055, "net_wt": 4310, "date": "2026-04-15", "time": "14:12", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 43.1, "bouncing": 0.14, "net_weight": 42.96, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 43.1, "rem_packing": null}, {"sno": 98, "slipno": 1419, "truck": "FARM MAHENDRASI", "first_wt": 9470, "second_wt": 4245, "net_wt": 5225, "date": "2026-04-15", "time": "15:29", "variety": "HI-8759 PUSA TEJAS", "supplier": "MAHENDRASINGH AMARPURA", "bags": 92, "size": 0, "bag_wgt": 0, "wgt_bag": 52.25, "bouncing": 0.17, "net_weight": 52.08, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 52.25, "rem_packing": null}, {"sno": 99, "slipno": 1420, "truck": "MASSY DINESH", "first_wt": 9175, "second_wt": 4110, "net_wt": 5065, "date": "2026-04-15", "time": "16:09", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 50.65, "bouncing": 0.17, "net_weight": 50.48, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 50.65, "rem_packing": null}, {"sno": 100, "slipno": 1421, "truck": "MP09GF0868", "first_wt": 16770, "second_wt": 4385, "net_wt": 12385, "date": "2026-04-15", "time": "16:20", "variety": "3 SR 72", "supplier": "SANDEEP NIMBODA", "bags": 220, "size": 0.6, "bag_wgt": 132.0, "wgt_bag": 122.53, "bouncing": 0.41, "net_weight": 122.12, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 122.53, "rem_packing": null}, {"sno": 101, "slipno": 1422, "truck": "SONALIKA DINESH", "first_wt": 9135, "second_wt": 4230, "net_wt": 4905, "date": "2026-04-15", "time": "17:16", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 49.05, "bouncing": 0.16, "net_weight": 48.89, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 49.05, "rem_packing": null}, {"sno": 102, "slipno": 1423, "truck": "DL1M47281", "first_wt": 17880, "second_wt": 7090, "net_wt": 10790, "date": "2026-04-15", "time": "18:09", "variety": "HI-8849", "supplier": "SANDEEP NIMBODA", "bags": 193, "size": 0.6, "bag_wgt": 116.0, "wgt_bag": 106.74, "bouncing": 0.36, "net_weight": 106.38, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 106.74, "rem_packing": null}, {"sno": 103, "slipno": 1424, "truck": "DL1M47281", "first_wt": 7090, "second_wt": 4690, "net_wt": 2400, "date": "2026-04-15", "time": "19:07", "variety": "3 SR 72", "supplier": "SANDEEP NIMBODA", "bags": 43, "size": 0.6, "bag_wgt": 26.0, "wgt_bag": 23.74, "bouncing": 0.08, "net_weight": 23.66, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 23.74, "rem_packing": null}, {"sno": 104, "slipno": 1425, "truck": "SONALIKA DINESH", "first_wt": 8380, "second_wt": 4155, "net_wt": 4225, "date": "2026-04-15", "time": "19:16", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 42.25, "bouncing": 0.14, "net_weight": 42.11, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 42.25, "rem_packing": null}, {"sno": 105, "slipno": 1426, "truck": "MASSY DINESH", "first_wt": 6140, "second_wt": 4095, "net_wt": 2045, "date": "2026-04-15", "time": "19:28", "variety": "HI-8759 PUSA TEJAS", "supplier": "DINESH PATEL PIPLIYARAGHO", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 20.45, "bouncing": 0.07, "net_weight": 20.38, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 20.45, "rem_packing": null}, {"sno": 106, "slipno": 1427, "truck": "HOLLAND ALOK", "first_wt": 8600, "second_wt": 4225, "net_wt": 4375, "date": "2026-04-16", "time": "12:07", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 43.75, "bouncing": 0.15, "net_weight": 43.6, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 43.75, "rem_packing": null}, {"sno": 107, "slipno": 1428, "truck": "NEW AALOK", "first_wt": 7490, "second_wt": 3830, "net_wt": 3660, "date": "2026-04-16", "time": "12:10", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 36.6, "bouncing": 0.12, "net_weight": 36.48, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 36.6, "rem_packing": null}, {"sno": 108, "slipno": 1429, "truck": "MP13GB2884", "first_wt": 16945, "second_wt": 5040, "net_wt": 11905, "date": "2026-04-16", "time": "13:39", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 119.05, "bouncing": 0.4, "net_weight": 118.65, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 119.05, "rem_packing": null}, {"sno": 109, "slipno": 1430, "truck": "MP09GE7627", "first_wt": 16625, "second_wt": 4335, "net_wt": 12290, "date": "2026-04-16", "time": "15:33", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 122.9, "bouncing": 0.41, "net_weight": 122.49, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 122.9, "rem_packing": null}, {"sno": 110, "slipno": 1431, "truck": "HOLLAND AALOK", "first_wt": 10520, "second_wt": 4540, "net_wt": 5980, "date": "2026-04-16", "time": "16:50", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 59.8, "bouncing": 0.2, "net_weight": 59.6, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 59.8, "rem_packing": null}, {"sno": 111, "slipno": 1432, "truck": "MP09GF0868", "first_wt": 17170, "second_wt": 4390, "net_wt": 12780, "date": "2026-04-16", "time": "17:29", "variety": "HI-8849", "supplier": "SANDEEP NIMBODA", "bags": 230, "size": 0.6, "bag_wgt": 138.0, "wgt_bag": 126.42, "bouncing": 0.43, "net_weight": 125.99, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 126.42, "rem_packing": null}, {"sno": 112, "slipno": 1433, "truck": "DL1M47281", "first_wt": 18020, "second_wt": 4880, "net_wt": 13140, "date": "2026-04-16", "time": "19:35", "variety": "HI-8849", "supplier": "SANDEEP NIMBODA", "bags": 235, "size": 0.6, "bag_wgt": 141.0, "wgt_bag": 129.99, "bouncing": 0.44, "net_weight": 129.55, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 129.99, "rem_packing": null}, {"sno": 113, "slipno": 1435, "truck": "MP13GB2884", "first_wt": 16615, "second_wt": 5035, "net_wt": 11580, "date": "2026-04-17", "time": "12:02", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 115.8, "bouncing": 0.39, "net_weight": 115.41, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 115.8, "rem_packing": null}, {"sno": 114, "slipno": 1436, "truck": "HOLLAND", "first_wt": 7965, "second_wt": 3835, "net_wt": 4130, "date": "2026-04-17", "time": "14:02", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 41.3, "bouncing": 0.14, "net_weight": 41.16, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 41.3, "rem_packing": null}, {"sno": 115, "slipno": 1437, "truck": "MP09GF0868", "first_wt": 15930, "second_wt": 4390, "net_wt": 11540, "date": "2026-04-17", "time": "14:22", "variety": "HI-8759 PUSA TEJAS", "supplier": "AWADHESH AANJANA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 115.4, "bouncing": 0.38, "net_weight": 115.02, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-18", "wt_recpt": 342.0, "graded_bags": 573, "graded_bag_size": 55, "total_graded": 315.15, "graded_loose": 0.0, "undersize": 27.25, "final_graded": 342.4, "diff_grading": 0.4, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -227.0, "rem_packing": 315.15}, {"sno": 116, "slipno": 1438, "truck": "DL1M47281", "first_wt": 16675, "second_wt": 4660, "net_wt": 12015, "date": "2026-04-17", "time": "14:23", "variety": "HI-8759 PUSA TEJAS", "supplier": "AWADHESH AANJANA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 120.15, "bouncing": 0.4, "net_weight": 119.75, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 120.15, "rem_packing": null}, {"sno": 117, "slipno": 1439, "truck": "HOLLAND ALOK", "first_wt": 8380, "second_wt": 4230, "net_wt": 4150, "date": "2026-04-17", "time": "15:12", "variety": "HI-8759 PUSA TEJAS", "supplier": "AALOK CHODHARY SAYARKHEDI", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 41.5, "bouncing": 0.14, "net_weight": 41.36, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-18", "wt_recpt": 580.7, "graded_bags": 954, "graded_bag_size": 55, "total_graded": 525.0, "graded_loose": 0.3, "undersize": 55.68, "final_graded": 580.68, "diff_grading": -0.02, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": -539.18, "rem_packing": 525.0}, {"sno": 118, "slipno": 1442, "truck": "DL1M47281", "first_wt": 15290, "second_wt": 4645, "net_wt": 10645, "date": "2026-04-18", "time": "11:40", "variety": "HI-8759 PUSA TEJAS", "supplier": "AWADHESH AANJANA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 106.45, "bouncing": 0.35, "net_weight": 106.1, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 106.45, "rem_packing": null}, {"sno": 119, "slipno": 1443, "truck": "DL1M47281", "first_wt": 17925, "second_wt": 4695, "net_wt": 13230, "date": "2026-04-18", "time": "17:33", "variety": "SREERAM 303", "supplier": "HAKAMSINGH RALAYTA", "bags": 235, "size": 0.6, "bag_wgt": 141.0, "wgt_bag": 130.89, "bouncing": 0.44, "net_weight": 130.45, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 130.89, "rem_packing": null}, {"sno": 120, "slipno": 1444, "truck": "MP09GE0760", "first_wt": 19525, "second_wt": 4660, "net_wt": 14865, "date": "2026-04-19", "time": "11:05", "variety": "HI-8759 PUSA TEJAS", "supplier": "LAKHANSINGH MUNDALASULEMAN", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 148.65, "bouncing": 0.5, "net_weight": 148.15, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": "2026-04-22", "wt_recpt": 630.8, "graded_bags": 55, "graded_bag_size": 0, "total_graded": null, "graded_loose": 0.0, "undersize": 51.69, "final_graded": 51.69, "diff_grading": -579.11, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 96.96, "rem_packing": null}, {"sno": 121, "slipno": 1445, "truck": "CG07CG5954", "first_wt": 26915, "second_wt": 5725, "net_wt": 21190, "date": "2026-04-19", "time": "13:47", "variety": "HI-8759 PUSA TEJAS", "supplier": "LAKHANSINGH MUNDALASULEMAN", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 211.9, "bouncing": 0.71, "net_weight": 211.19, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 211.9, "rem_packing": null}, {"sno": 122, "slipno": 1446, "truck": "MP09GE0760", "first_wt": 20155, "second_wt": 4655, "net_wt": 15500, "date": "2026-04-20", "time": "10:41", "variety": "HI-8759 PUSA TEJAS", "supplier": "LAKHANSINGH MUNDALASULEMAN", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 155.0, "bouncing": 0.52, "net_weight": 154.48, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 155.0, "rem_packing": null}, {"sno": 123, "slipno": 1447, "truck": "CG07CG5954", "first_wt": 17210, "second_wt": 5685, "net_wt": 11525, "date": "2026-04-20", "time": "14:42", "variety": "HI-8759 PUSA TEJAS", "supplier": "LAKHANSINGH MUNDALASULEMAN", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 115.25, "bouncing": 0.38, "net_weight": 114.87, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 115.25, "rem_packing": null}, {"sno": 124, "slipno": 1448, "truck": "SONALIKA ASHISH", "first_wt": 9195, "second_wt": 4085, "net_wt": 5110, "date": "2026-04-20", "time": "17:52", "variety": "HI-8759 PUSA TEJAS", "supplier": "ASHISH SARIYA KACHNARIYA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 51.1, "bouncing": 0.17, "net_weight": 50.93, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 51.1, "rem_packing": null}, {"sno": 125, "slipno": 1449, "truck": "SWARAJ ASHISH", "first_wt": 9145, "second_wt": 3990, "net_wt": 5155, "date": "2026-04-20", "time": "18:28", "variety": "HI-8759 PUSA TEJAS", "supplier": "ASHISH SARIYA KACHNARIYA", "bags": 0, "size": 0, "bag_wgt": 0, "wgt_bag": 51.55, "bouncing": 0.17, "net_weight": 51.38, "moisture": null, "germination": null, "remark": null, "rate": null, "grading_date": null, "wt_recpt": null, "graded_bags": null, "graded_bag_size": null, "total_graded": null, "graded_loose": null, "undersize": null, "final_graded": null, "diff_grading": null, "pack_date": null, "pack_qty": null, "pack_bags": null, "pack_size": null, "pack_loose": null, "ghamsi": null, "total_packed": null, "diff_packing": null, "moisture_pack": null, "germ_pack": null, "lot_no": null, "location_pack": null, "rem_grading": 51.55, "rem_packing": null}];
+
+// App state - in-memory with storage API fallback
+let EDITS = {}, GRADE_SESSIONS = {}, PACK_SESSIONS = {}, LEDGER_RATES = {};
+// NEW_SLIPS stores slips added via form (not in BASE)
+let NEW_SLIPS = [];
+
+async function persistSave(){
+  try{
+    await window.storage.set('wheat_edits', JSON.stringify(EDITS));
+    await window.storage.set('wheat_grade_sessions', JSON.stringify(GRADE_SESSIONS));
+    await window.storage.set('wheat_pack_sessions', JSON.stringify(PACK_SESSIONS));
+    await window.storage.set('wheat_ledger_rates', JSON.stringify(LEDGER_RATES));
+    await window.storage.set('wheat_new_slips', JSON.stringify(NEW_SLIPS));
+  } catch(e){}
+}
+async function persistLoad(){
+  try{
+    const a=await window.storage.get('wheat_edits'); if(a) EDITS=JSON.parse(a.value);
+    const b=await window.storage.get('wheat_grade_sessions'); if(b) GRADE_SESSIONS=JSON.parse(b.value);
+    const c=await window.storage.get('wheat_pack_sessions'); if(c) PACK_SESSIONS=JSON.parse(c.value);
+    const d=await window.storage.get('wheat_ledger_rates'); if(d) LEDGER_RATES=JSON.parse(d.value);
+    const e=await window.storage.get('wheat_new_slips'); if(e) NEW_SLIPS=JSON.parse(e.value);
+  } catch(e){}
+}
+function saveEdits(){ persistSave(); }
+function saveGradeSessions(){ persistSave(); }
+function savePackSessions(){ persistSave(); }
+function saveLedgerRates(){ persistSave(); }
+
+function computeDerived(r){
+  // recompute weight chain fields from raw values
+  const bwgt = Math.ceil((r.bags||0)*(r.size||0));
+  const wgt_bag = r.net_wt ? +((r.net_wt - bwgt)/100).toFixed(4) : 0;
+  const bouncing = r.net_wt ? +(Math.ceil((r.net_wt/90)*0.003*100)/100).toFixed(4) : 0;
+  const net_weight = +(wgt_bag - bouncing).toFixed(4);
+  const tg = +(r.total_graded||0), us = +(r.undersize||0);
+  const pq = +(r.pack_qty||0), pl = +(r.pack_loose||0);
+  const rem_grading = +(wgt_bag - tg - us).toFixed(4);
+  const rem_packing = tg > 0 ? +(tg - pq + pl).toFixed(4) : null;
+  return {...r, bag_wgt:bwgt, wgt_bag, bouncing, net_weight, rem_grading, rem_packing};
+}
+
+function getData(){
+  const base = BASE.map(r => {
+    const e = EDITS[r.slipno] || {};
+    return computeDerived({...r,...e});
+  });
+  // Include new slips added via form
+  const newRows = NEW_SLIPS.map(r => computeDerived({...r,...(EDITS[r.slipno]||{})}));
+  return [...base, ...newRows];
+}
+
+const DATA = () => getData().filter(r=>r.variety && String(r.variety)!=='0' && r.supplier && String(r.supplier)!=='0');
+
+function getAllSups(){ return [...new Set(DATA().map(r=>String(r.supplier)).filter(Boolean))].sort(); }
+function getAllVars(){ return [...new Set(DATA().map(r=>String(r.variety)).filter(Boolean))].sort(); }
+
+const VAR_C = {'LOK 1':'#3fb950','HI-8759 PUSA TEJAS':'#58a6ff','HI-1650':'#bc8cff','GW-543':'#f0883e','3385':'#d29922','GW-322':'#39d0c8','HI-8713 PUSA MANGAL':'#f85149','3 SR 72':'#a8dadc','GW-513':'#ffd700','GW-555':'#ff69b4','HI-8849':'#90ee90','HI-8850':'#dda0dd','PRADHAN':'#87ceeb','PUSA MANAV':'#ffa07a','SREERAM 303':'#98fb98'};
+const vc = v => VAR_C[v]||'#8b949e';
+
+let allDates = [...new Set(DATA().map(r=>r.date).filter(Boolean))].sort();
+let allVars = getAllVars();
+let allSups = getAllSups();
+function refreshLists(){
+  allDates = [...new Set(DATA().map(r=>r.date).filter(Boolean))].sort();
+  allVars = getAllVars();
+  allSups = getAllSups();
+}
+
+// state
+let curPage='Dash', selDate='ALL', searchQ='', filterVar='ALL', formTab='inward';
+let editingSlip=null, editingGradeKey=null, editingGradeIdx=null;
+let editingPackKey=null, editingPackIdx=null;
+
+const fmt=(v,d=2)=>v==null?'—':typeof v==='number'?v.toFixed(d):v;
+
+// FIX J: Compute live remaining grading/packing taking GRADE_SESSIONS and PACK_SESSIONS into account
+function getLiveGradeRem(supplier, variety){
+  const key=`${supplier}||${variety}`;
+  const rows=DATA().filter(r=>String(r.supplier)===String(supplier)&&String(r.variety)===String(variety));
+  const totalWgtBag=rows.reduce((a,r)=>a+(+r.wgt_bag||0),0);
+  // Graded qty: prefer sessions sum, else max from BASE data
+  const sessions=GRADE_SESSIONS[key]||[];
+  const gradedTotal = sessions.length>0
+    ? sessions.reduce((a,s)=>a+(+s.total_graded||0),0)
+    : rows.reduce((a,r)=>a+(+r.total_graded||0),0);
+  const usTotal = sessions.length>0
+    ? sessions.reduce((a,s)=>a+(+s.undersize||0),0)
+    : rows.reduce((a,r)=>a+(+r.undersize||0),0);
+  return +(totalWgtBag - gradedTotal - usTotal).toFixed(4);
+}
+function getLivePackRem(supplier, variety){
+  const key=`${supplier}||${variety}`;
+  const rows=DATA().filter(r=>String(r.supplier)===String(supplier)&&String(r.variety)===String(variety));
+  const gSessions=GRADE_SESSIONS[key]||[];
+  const gradedTotal = gSessions.length>0
+    ? gSessions.reduce((a,s)=>a+(+s.total_graded||0),0)
+    : rows.reduce((a,r)=>a+(+r.total_graded||0),0);
+  if(gradedTotal===0) return null;
+  const pSessions=PACK_SESSIONS[key]||[];
+  const packedTotal = pSessions.length>0
+    ? pSessions.reduce((a,s)=>a+(+s.final_packed||0),0)
+    : rows.reduce((a,r)=>a+(+r.total_packed||0),0);
+  return +(gradedTotal - packedTotal).toFixed(4);
+}
+const fq=v=>v==null?'—':(+v).toFixed(2)+' qtl';
+const fi=v=>v==null?'—':(+v).toLocaleString('en-IN');
+const frs=v=>v==null?'—':'₹'+(+v).toLocaleString('en-IN',{maximumFractionDigits:0});
+
+// ── NAV ──────────────────────────────────────────────────────────────────────
+function nav(p,btn){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(x=>x.classList.remove('active'));
+  document.getElementById('pg'+p).classList.add('active');
+  if(btn) btn.classList.add('active');
+  curPage=p; render(p);
+}
+function render(p){
+  if(p==='Dash') renderDash();
+  else if(p==='Slips') renderSlips();
+  else if(p==='Add') renderAdd();
+  else if(p==='Grade') renderGrade();
+  else if(p==='Ledger') renderLedger();
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────────────────────
+function renderDash(){
+  const el=document.getElementById('pgDash');
+  const d = DATA();
+  const rows = selDate==='ALL'?d:d.filter(r=>r.date===selDate);
+  const tSlips=rows.length;
+  const tSlipWt=rows.reduce((a,r)=>a+(+r.wgt_bag||0),0);
+  const tNet=rows.reduce((a,r)=>a+(+r.net_weight||0),0);
+  const tGraded=rows.reduce((a,r)=>a+(+r.total_graded||0),0);
+  const tFG=rows.reduce((a,r)=>a+(+r.final_graded||0),0);
+  const tPacked=rows.reduce((a,r)=>a+(+r.total_packed||0),0);
+  // Use live session-aware remaining calculations
+  const tRemGrade=(()=>{
+    const keys=[...new Set(rows.map(r=>`${r.supplier}||${r.variety}`))];
+    return keys.reduce((a,k)=>{
+      const[s,v]=k.split('||'); return a+Math.max(0,getLiveGradeRem(s,v));
+    },0);
+  })();
+  const tRemPack=(()=>{
+    const keys=[...new Set(rows.map(r=>`${r.supplier}||${r.variety}`))];
+    return keys.reduce((a,k)=>{
+      const[s,v]=k.split('||'); const rem=getLivePackRem(s,v)||0; return a+Math.max(0,rem);
+    },0);
+  })();
+
+  // chart
+  const byDate={};
+  d.forEach(r=>{if(!r.date)return;byDate[r.date]=byDate[r.date]||{s:0,w:0};byDate[r.date].s++;byDate[r.date].w+=+r.wgt_bag||0;});
+  const cDates=Object.keys(byDate).sort().slice(-10);
+  const maxW=Math.max(...cDates.map(dd=>byDate[dd].w),1);
+
+  // variety
+  const byV={};
+  rows.forEach(r=>{if(!r.variety)return;const v=String(r.variety);byV[v]=byV[v]||{s:0,w:0};byV[v].s++;byV[v].w+=+r.wgt_bag||0;});
+  const topV=Object.entries(byV).sort((a,b)=>b[1].w-a[1].w).slice(0,6);
+  const maxVW=Math.max(...topV.map(x=>x[1].w),1);
+
+  const gPct=tSlipWt>0?Math.min(100,(tFG/tSlipWt)*100):0;
+  const pPct=tFG>0?Math.min(100,(tPacked/tFG)*100):0;
+
+  el.innerHTML=`
+  <div class="dc-bar">
+    <div class="dc ${selDate==='ALL'?'active':''}" onclick="setDate('ALL')">All</div>
+    ${allDates.map(dd=>`<div class="dc ${selDate===dd?'active':''}" onclick="setDate('${dd}')">${dd.slice(5)}</div>`).join('')}
+  </div>
+  <div class="sh">Inward ${selDate==='ALL'?'(All)':'('+selDate+')'}</div>
+  <div class="sg">
+    <div class="sc"><div class="sv c-acc">${tSlips}</div><div class="sl">Slips</div></div>
+    <div class="sc"><div class="sv c-grn">${tSlipWt.toFixed(1)}</div><div class="sl">Wgt-Bag (qtl)</div></div>
+    <div class="sc"><div class="sv c-blu">${tNet.toFixed(1)}</div><div class="sl">Net Wt (qtl)</div></div>
+    <div class="sc"><div class="sv c-amb">${(tSlipWt-tNet).toFixed(2)}</div><div class="sl">Bouncing</div></div>
+  </div>
+  <div class="sh">Grading & Packing</div>
+  <div class="sg3">
+    <div class="sc"><div class="sv c-tel">${tGraded.toFixed(1)}</div><div class="sl">Graded</div></div>
+    <div class="sc"><div class="sv c-pur">${tFG.toFixed(1)}</div><div class="sl">Final Graded</div></div>
+    <div class="sc"><div class="sv c-grn">${tPacked.toFixed(1)}</div><div class="sl">Packed</div></div>
+  </div>
+  <div class="sh">Remaining</div>
+  <div class="sg">
+    <div class="sc"><div class="sv ${tRemGrade>0?'c-amb':'c-grn'}">${tRemGrade.toFixed(2)}</div><div class="sl">Rem. Grading</div></div>
+    <div class="sc"><div class="sv ${tRemPack>0?'c-blu':'c-grn'}">${tRemPack.toFixed(2)}</div><div class="sl">Rem. Packing</div></div>
+  </div>
+  <div class="cd">
+    <div class="pw"><div class="pl"><span>Grading Progress</span><span>${gPct.toFixed(1)}%</span></div><div class="pb"><div class="pf tel" style="width:${gPct}%"></div></div></div>
+    <div class="pw" style="margin-top:7px"><div class="pl"><span>Packing Progress</span><span>${pPct.toFixed(1)}%</span></div><div class="pb"><div class="pf grn" style="width:${pPct}%"></div></div></div>
+  </div>
+  <div class="sh">Daily Inward</div>
+  <div class="cd">
+    <div class="bc">
+      ${cDates.map(dd=>{const h=Math.max(3,Math.round((byDate[dd].w/maxW)*60));const ia=dd===selDate;return`<div class="bc-c" onclick="setDate('${dd}')"><div class="bc-b" style="height:${h}px;background:${ia?'var(--acc)':'var(--blu)'}"></div><div class="bc-l">${dd.slice(5)}</div></div>`;}).join('')}
+    </div>
+  </div>
+  <div class="sh">By Variety</div>
+  ${topV.map(([v,s])=>`<div class="cd" style="padding:9px 12px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:7px"><div class="vd" style="background:${vc(v)}"></div><span style="font-size:12px;font-weight:500">${v}</span></div><div style="text-align:right"><div style="font-family:Rajdhani;font-size:15px;font-weight:700">${s.w.toFixed(1)} <span style="font-size:10px;color:var(--tx2)">qtl</span></div><div style="font-size:10px;color:var(--tx3)">${s.s} slips</div></div></div><div class="pb" style="margin-top:6px"><div class="pf" style="width:${(s.w/maxVW)*100}%;background:${vc(v)}"></div></div></div>`).join('')}
+  `;
+}
+
+function setDate(d){selDate=d;render(curPage);}
+
+// ── SLIPS ────────────────────────────────────────────────────────────────────
+function renderSlips(){
+  const el=document.getElementById('pgSlips');
+  const filtered=DATA().filter(r=>{
+    if(selDate!=='ALL'&&r.date!==selDate)return false;
+    if(filterVar!=='ALL'&&String(r.variety)!==filterVar)return false;
+    if(searchQ){const q=searchQ.toLowerCase();return(r.supplier||'').toLowerCase().includes(q)||(r.truck||'').toLowerCase().includes(q)||String(r.slipno||'').includes(q)||(String(r.variety||'')).toLowerCase().includes(q);}
+    return true;
+  });
+  const tWt=filtered.reduce((a,r)=>a+(+r.wgt_bag||0),0);
+
+  el.innerHTML=`
+  <div class="sb">
+    <input class="si" placeholder="Slip, supplier, truck, variety…" value="${searchQ}" oninput="onSearch(this.value)">
+    <button class="fb ${filterVar!=='ALL'?'active':''}" onclick="cycleVar()">▼ ${filterVar==='ALL'?'All':filterVar.slice(0,6)}</button>
+  </div>
+  <div class="dc-bar">
+    <div class="dc ${selDate==='ALL'?'active':''}" onclick="setDate('ALL')">All</div>
+    ${allDates.map(dd=>`<div class="dc ${selDate===dd?'active':''}" onclick="setDate('${dd}')">${dd.slice(5)}</div>`).join('')}
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:9px">
+    <span style="font-size:11px;color:var(--tx2)">${filtered.length} slips</span>
+    <span style="font-size:11px;color:var(--grn)">${tWt.toFixed(2)} qtl</span>
+  </div>
+  ${filtered.length===0?'<div class="empty">No slips found</div>':filtered.map(r=>slipCard(r)).join('')}
+  `;
+}
+
+function slipCard(r){
+  const gKey=`${r.supplier}||${r.variety}`;
+  const grpRows=DATA().filter(x=>String(x.supplier)===String(r.supplier)&&String(x.variety)===String(r.variety));
+  const hg=grpRows.some(x=>x.total_graded!=null) || (GRADE_SESSIONS[gKey]||[]).length>0;
+  const hp=grpRows.some(x=>x.total_packed!=null) || (PACK_SESSIONS[gKey]||[]).length>0;
+  const stat=hp?'<span class="pi grn">Packed</span>':hg?'<span class="pi tel">Graded</span>':'<span class="pi amb">Inward</span>';
+  return`<div class="sk" onclick="openSlip(${r.slipno})">
+  <div class="sk-h">
+    <div><div class="sk-no">#${r.slipno}</div><div class="sk-tr">${r.truck||'—'}</div></div>
+    <div style="text-align:right">${stat}<div style="font-size:10px;color:var(--tx3);margin-top:2px">${r.date||''} ${r.time||''}</div></div>
+  </div>
+  <div class="sk-b">
+    <div class="sk-r"><span class="sk-l">Supplier</span><span class="sk-v" style="font-size:12px">${r.supplier||'—'}</span></div>
+    <div class="sk-r"><span class="sk-l">Variety</span><span style="display:flex;align-items:center;gap:4px"><span class="vd" style="background:${vc(String(r.variety))}"></span><span class="sk-v" style="font-size:12px">${r.variety||'—'}</span></span></div>
+    <div class="sk-r"><span class="sk-l">First→Second</span><span class="sk-v">${fi(r.first_wt)}→${fi(r.second_wt)} kg</span></div>
+    <div class="sk-r"><span class="sk-l">Wgt-Bag</span><span class="sk-v" style="color:var(--grn)">${fmt(r.wgt_bag,3)} qtl</span></div>
+    <div class="sk-r"><span class="sk-l">Net Weight</span><span class="sk-v" style="color:var(--acc)">${fmt(r.net_weight,3)} qtl</span></div>
+    ${(hg||(GRADE_SESSIONS[`${r.supplier}||${r.variety}`]||[]).length>0)?`<div class="sk-r"><span class="sk-l">Rem. Grade</span><span class="sk-v" style="color:${getLiveGradeRem(r.supplier,r.variety)>0.01?'var(--amb)':'var(--grn)'}">
+      ${getLiveGradeRem(r.supplier,r.variety).toFixed(3)} qtl</span></div>`:''}
+    ${(hg||(GRADE_SESSIONS[`${r.supplier}||${r.variety}`]||[]).length>0)?`<div class="sk-r"><span class="sk-l">Rem. Pack</span><span class="sk-v" style="color:${(getLivePackRem(r.supplier,r.variety)||0)>0.01?'var(--blu)':'var(--grn)'}">
+      ${getLivePackRem(r.supplier,r.variety)!=null?getLivePackRem(r.supplier,r.variety).toFixed(3)+' qtl':'—'}</span></div>`:''}
+  </div>
+  </div>`;
+}
+
+function onSearch(v){searchQ=v;renderSlips();}
+function cycleVar(){
+  const i=allVars.indexOf(filterVar);
+  filterVar=(filterVar==='ALL')?allVars[0]:(i>=allVars.length-1?'ALL':allVars[i+1]);
+  renderSlips();
+}
+
+// ── SLIP DETAIL MODAL ────────────────────────────────────────────────────────
+function openSlip(slipno){
+  const r=DATA().find(x=>x.slipno===slipno);
+  if(!r)return;
+  const gKey=`${r.supplier}||${r.variety}`;
+  const hg=r.total_graded!=null || (GRADE_SESSIONS[gKey]||[]).length>0;
+  const hp=r.total_packed!=null || (PACK_SESSIONS[gKey]||[]).length>0;
+  const rate=LEDGER_RATES[`${r.supplier}||${r.variety}`]||r.rate;
+  const amt=rate&&r.net_weight?(+rate)*(+r.net_weight):null;
+
+  document.getElementById('modalBody').innerHTML=`
+  <div class="mt">Slip #${r.slipno}</div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px">
+    ${hp?'<span class="pi grn">Packed</span>':hg?'<span class="pi tel">Graded</span>':'<span class="pi amb">Inward</span>'}
+    <span class="pi gray">${r.variety||'—'}</span>
+    <span class="pi gray">${r.date||''}</span>
+  </div>
+  <div style="display:flex;gap:7px;margin-bottom:13px">
+    <button class="btn btn-e btn-sm" onclick="editSlip(${r.slipno})">✏ Edit Inward</button>
+  </div>
+
+  <div class="sh">Inward</div>
+  <div class="cd">
+    <div class="kv"><span class="kk">Supplier</span><span class="kv-v">${r.supplier||'—'}</span></div>
+    <div class="kv"><span class="kk">Truck</span><span class="kv-v">${r.truck||'—'}</span></div>
+    <div class="kv"><span class="kk">Time</span><span class="kv-v">${r.time||'—'}</span></div>
+    <div class="dv"></div>
+    <div class="kv"><span class="kk">First Wt</span><span class="kv-v c-blu">${fi(r.first_wt)} kg</span></div>
+    <div class="kv"><span class="kk">Second Wt</span><span class="kv-v c-blu">${fi(r.second_wt)} kg</span></div>
+    <div class="fch"><div class="fb2">${fi(r.first_wt)}</div><div class="fop">−</div><div class="fb2">${fi(r.second_wt)}</div><div class="fop">=</div><div class="fb2 r">${fi(r.net_wt)} kg</div></div>
+    <div class="kv"><span class="kk">Bags×Size</span><span class="kv-v">${r.bags||0}×${r.size||0}=${r.bag_wgt||0} kg</span></div>
+    <div class="kv"><span class="kk">Wgt-Bag</span><span class="kv-v c-grn">${fmt(r.wgt_bag,3)} qtl</span></div>
+    <div class="kv"><span class="kk">Bouncing</span><span class="kv-v c-red">${fmt(r.bouncing,3)} qtl</span></div>
+    <div class="fch"><div class="fb2">${fmt(r.wgt_bag,3)}</div><div class="fop">−</div><div class="fb2">${fmt(r.bouncing,3)}</div><div class="fop">=</div><div class="fb2 r">${fmt(r.net_weight,3)} qtl</div></div>
+    <div class="kv"><span class="kk">Rate</span><span class="kv-v">${rate?'₹'+rate+'/qtl':'—'}</span></div>
+    <div class="kv"><span class="kk">Amount</span><span class="kv-v c-amb">${amt?frs(amt):'—'}</span></div>
+    ${r.moisture?`<div class="dv"></div><div class="kv"><span class="kk">Moisture</span><span class="kv-v">${r.moisture}%</span></div>`:''}
+    ${r.germination?`<div class="kv"><span class="kk">Germination</span><span class="kv-v">${r.germination}%</span></div>`:''}
+    ${r.remark?`<div class="kv"><span class="kk">Remark</span><span class="kv-v" style="font-size:11px">${r.remark}</span></div>`:''}
+  </div>
+
+  ${hg?`
+  <div class="sh" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Grading Sessions</span>
+    <button class="btn btn-e btn-sm" onclick="closeModal();editGradeSession('${r.supplier}||${r.variety}',null)">+ Session</button>
+  </div>
+  ${renderGradeSessions(r)}
+  <div class="sh">Remaining</div>
+  <div class="rem-card ${getLiveGradeRem(r.supplier,r.variety)>0.01?'amb':'grn'}">
+    <div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px">Remaining Grading</div>
+    <div style="font-family:Rajdhani;font-size:20px;font-weight:700;color:${getLiveGradeRem(r.supplier,r.variety)>0.01?'var(--amb)':'var(--grn)'}">
+      ${getLiveGradeRem(r.supplier,r.variety).toFixed(4)} qtl</div>
+    <div style="font-size:10px;color:var(--tx2)">Wgt-Bag across all slips − Total Graded − Undersize</div>
+  </div>
+  <div class="rem-card ${(getLivePackRem(r.supplier,r.variety)||0)>0.01?'amb':'grn'}">
+    <div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px">Remaining Packing</div>
+    <div style="font-family:Rajdhani;font-size:20px;font-weight:700;color:${(getLivePackRem(r.supplier,r.variety)||0)>0.01?'var(--blu)':'var(--grn)'}">
+      ${getLivePackRem(r.supplier,r.variety)!=null?getLivePackRem(r.supplier,r.variety).toFixed(4)+' qtl':'—'}</div>
+    <div style="font-size:10px;color:var(--tx2)">Total Graded − Packed Qty + Pack Loose</div>
+  </div>` : ''}
+
+  ${hp?`
+  <div class="sh" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Packing Sessions</span>
+    <button class="btn btn-e btn-sm" onclick="closeModal();editPackSession('${r.supplier}||${r.variety}',null)">+ Session</button>
+  </div>
+  ${renderPackSessions(r)}` : ''}
+
+  <button class="btn btn-s" onclick="closeModal()">Close</button>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+
+function renderGradeSessions(r){
+  const key=`${r.supplier}||${r.variety}`;
+  const sessions=GRADE_SESSIONS[key]||[];
+  if(!sessions.length){
+    // Find the summary row for this group (has wt_recpt filled in)
+    const grpAll=DATA().filter(x=>String(x.supplier)===String(r.supplier)&&String(x.variety)===String(r.variety));
+    const sumRow=grpAll.find(x=>x.wt_recpt!=null)||r;
+    const grpWtr=grpAll.reduce((a,x)=>a+(+x.wgt_bag||0),0);
+    return`<div class="cd">
+      <div class="kv"><span class="kk">Grading Date</span><span class="kv-v">${sumRow.grading_date||r.grading_date||'—'}</span></div>
+      <div class="kv"><span class="kk">Wt Recpt (all slips)</span><span class="kv-v c-tel">${grpWtr.toFixed(3)} qtl</span></div>
+      <div class="dg">
+        <div class="db"><div class="db-h">Graded</div>
+          <div class="kv"><span class="kk">Bags×Size</span><span class="kv-v">${sumRow.graded_bags||0}×${sumRow.graded_bag_size||0}</span></div>
+          <div class="kv"><span class="kk">Total</span><span class="kv-v c-tel">${fq(sumRow.total_graded)}</span></div>
+          <div class="kv"><span class="kk">U/S</span><span class="kv-v c-amb">${fq(sumRow.undersize)}</span></div>
+        </div>
+        <div class="db"><div class="db-h">Result</div>
+          <div class="kv"><span class="kk">Final</span><span class="kv-v c-pur">${fq(sumRow.final_graded)}</span></div>
+          <div class="kv"><span class="kk">Diff</span><span class="kv-v" style="color:${sumRow.diff_grading<0?'var(--red)':'var(--grn)'">${sumRow.diff_grading!=null?(sumRow.diff_grading>0?'+':'')+sumRow.diff_grading.toFixed(3):'—'}</span></div>
+        </div>
+      </div>
+    </div>`;
+  }
+  return sessions.map((s,i)=>`
+    <div class="ses-row">
+      <div class="ses-head">
+        <span class="ses-no">Session ${i+1} — ${s.date||'?'}</span>
+        <span>
+          <button class="ses-edit" onclick="closeModal();editGradeSession('${key}',${i})">Edit</button>
+          <button class="ses-del" onclick="delGradeSession('${key}',${i})">Del</button>
+        </span>
+      </div>
+      <div class="kv"><span class="kk">Bags×Size</span><span class="kv-v">${s.bags||0}×${s.bag_size||0} kg</span></div>
+      <div class="kv"><span class="kk">Loose</span><span class="kv-v">${fq(s.loose)}</span></div>
+      <div class="kv"><span class="kk">Total Graded</span><span class="kv-v c-tel">${fq(s.total_graded)}</span></div>
+      <div class="kv"><span class="kk">Undersize</span><span class="kv-v c-amb">${fq(s.undersize)}</span></div>
+      <div class="kv"><span class="kk">Ghamsi</span><span class="kv-v">${fq(s.ghamsi)}</span></div>
+      <div class="kv"><span class="kk">Final Graded</span><span class="kv-v c-pur">${fq(s.final_graded)}</span></div>
+      ${s.moisture?`<div class="kv"><span class="kk">Moisture</span><span class="kv-v">${s.moisture}%</span></div>`:''}
+      ${s.germ?`<div class="kv"><span class="kk">Germination</span><span class="kv-v">${s.germ}%</span></div>`:''}
+      ${s.remark?`<div class="kv"><span class="kk">Remark</span><span class="kv-v" style="font-size:11px">${s.remark}</span></div>`:''}
+    </div>`).join('');
+}
+
+function renderPackSessions(r){
+  const key=`${r.supplier}||${r.variety}`;
+  const sessions=PACK_SESSIONS[key]||[];
+  if(!sessions.length){
+    return`<div class="cd">
+      <div class="kv"><span class="kk">Pack Date</span><span class="kv-v">${r.pack_date||'—'}</span></div>
+      <div class="kv"><span class="kk">Bags×Size</span><span class="kv-v">${r.pack_bags||0}×${r.pack_size||0}</span></div>
+      <div class="kv"><span class="kk">Total Packed</span><span class="kv-v c-grn">${fq(r.total_packed)}</span></div>
+      <div class="kv"><span class="kk">Ghamsi</span><span class="kv-v">${fq(r.ghamsi)}</span></div>
+      <div class="kv"><span class="kk">Diff</span><span class="kv-v" style="color:${r.diff_packing<0?'var(--red)':'var(--grn)'}">${r.diff_packing!=null?(r.diff_packing>0?'+':'')+r.diff_packing.toFixed(3)+' qtl':'—'}</span></div>
+      ${r.lot_no?`<div class="kv"><span class="kk">Lot No</span><span class="kv-v">${r.lot_no}</span></div>`:''}
+      ${r.location_pack?`<div class="kv"><span class="kk">Location</span><span class="kv-v">${r.location_pack}</span></div>`:''}
+    </div>`;
+  }
+  return sessions.map((s,i)=>`
+    <div class="ses-row">
+      <div class="ses-head">
+        <span class="ses-no">Pack Session ${i+1} — ${s.date||'?'}</span>
+        <span>
+          <button class="ses-edit" onclick="closeModal();editPackSession('${key}',${i})">Edit</button>
+          <button class="ses-del" onclick="delPackSession('${key}',${i})">Del</button>
+        </span>
+      </div>
+      <div class="kv"><span class="kk">Bags×Size</span><span class="kv-v">${s.bags||0}×${s.bag_size||0} kg</span></div>
+      <div class="kv"><span class="kk">Loose</span><span class="kv-v">${fq(s.loose)}</span></div>
+      <div class="kv"><span class="kk">Total Packed</span><span class="kv-v c-grn">${fq(s.total_packed)}</span></div>
+      <div class="kv"><span class="kk">Ghamsi</span><span class="kv-v">${fq(s.ghamsi)}</span></div>
+      <div class="kv"><span class="kk">Final Packed</span><span class="kv-v c-pur">${fq(s.final_packed)}</span></div>
+      <div class="kv"><span class="kk">Diff</span><span class="kv-v" style="color:${s.diff<0?'var(--red)':'var(--grn)'}">${s.diff!=null?(s.diff>0?'+':'')+s.diff.toFixed(3)+' qtl':'—'}</span></div>
+      ${s.lot?`<div class="kv"><span class="kk">Lot No</span><span class="kv-v">${s.lot}</span></div>`:''}
+      ${s.location?`<div class="kv"><span class="kk">Location</span><span class="kv-v">${s.location}</span></div>`:''}
+      ${s.moisture?`<div class="kv"><span class="kk">Moisture</span><span class="kv-v">${s.moisture}%</span></div>`:''}
+      ${s.germ?`<div class="kv"><span class="kk">Germination</span><span class="kv-v">${s.germ}%</span></div>`:''}
+    </div>`).join('');
+}
+
+function delGradeSession(key,i){
+  if(!GRADE_SESSIONS[key])return;
+  GRADE_SESSIONS[key].splice(i,1);
+  saveGradeSessions();
+  showToast('Session deleted');
+  closeModal();
+}
+
+function delPackSession(key,i){
+  if(!PACK_SESSIONS[key])return;
+  PACK_SESSIONS[key].splice(i,1);
+  savePackSessions();
+  showToast('Session deleted');
+  closeModal();
+}
+
+// ── ADD / EDIT ────────────────────────────────────────────────────────────────
+function renderAdd(){
+  const el=document.getElementById('pgAdd');
+  el.innerHTML=`
+  <div class="tabs">
+    <button class="tab ${formTab==='inward'?'active':''}" onclick="setFT('inward')">Inward</button>
+    <button class="tab ${formTab==='grading'?'active':''}" onclick="setFT('grading')">Grading</button>
+    <button class="tab ${formTab==='packing'?'active':''}" onclick="setFT('packing')">Packing</button>
+  </div>
+  ${formTab==='inward'?inwardForm():formTab==='grading'?gradingForm():packingForm()}
+  `;
+  setTimeout(()=>{if(formTab==='inward')calcInward();else if(formTab==='grading')calcGrading();else calcPacking();},50);
+}
+
+function setFT(t){formTab=t;editingSlip=null;renderAdd();}
+
+function inwardForm(){
+  const e = editingSlip?EDITS[editingSlip]||{}:{};
+  const r = editingSlip?DATA().find(x=>x.slipno===editingSlip)||{}:{};
+  const m = {...r,...e};
+  return`
+  <div class="sh">${editingSlip?'✏ Editing Slip #'+editingSlip:'New Slip'}</div>
+  <div class="cd">
+    <div class="fr">
+      <div class="fg"><label class="fl">Slip No</label><input class="fi" id="f_sno" type="number" value="${m.slipno||''}"></div>
+      <div class="fg"><label class="fl">Date</label><input class="fi" id="f_date" type="date" value="${m.date||new Date().toISOString().slice(0,10)}"></div>
+    </div>
+    <div class="fg"><label class="fl">Truck No / Name</label><input class="fi" id="f_truck" type="text" value="${m.truck||''}"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">First Wt (kg)</label><input class="fi" id="f_f" type="number" value="${m.first_wt||''}" oninput="calcInward()"></div>
+      <div class="fg"><label class="fl">Second Wt (kg)</label><input class="fi" id="f_s" type="number" value="${m.second_wt||''}" oninput="calcInward()"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Bags</label><input class="fi" id="f_bags" type="number" value="${m.bags||0}" oninput="calcInward()"></div>
+      <div class="fg"><label class="fl">Bag Size (kg)</label><input class="fi" id="f_size" type="number" value="${m.size||0}" oninput="calcInward()"></div>
+    </div>
+    <div class="fg"><label class="fl">Wgt-Bag (qtl)</label><div class="fc" id="ci_wb">—</div></div>
+    <div class="fg"><label class="fl">Bouncing</label><div class="fc" id="ci_bo">—</div></div>
+    <div class="fg"><label class="fl" style="color:var(--acc)">Net Weight (qtl)</label><div class="fc acc" id="ci_nw">—</div></div>
+  </div>
+  <div class="cd">
+    <div class="fg"><label class="fl">Supplier</label>
+      <input class="fi" id="f_sup" list="sup_list" value="${m.supplier||''}" placeholder="Type or select supplier…">
+      <datalist id="sup_list">${allSups.map(s=>`<option value="${s}">`).join('')}</datalist></div>
+    <div class="fg"><label class="fl">Variety</label>
+      <select class="fs" id="f_var"><option value="">— Select Variety —</option>${allVars.map(v=>`<option value="${v}" ${String(m.variety)===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Rate (₹/qtl)</label><input class="fi" id="f_rate" type="number" value="${m.rate||''}" oninput="calcInward()"></div>
+      <div class="fg"><label class="fl">Amount</label><div class="fc grn" id="ci_amt" style="font-size:14px">—</div></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Moisture %</label><input class="fi" id="f_moi" type="number" value="${m.moisture||''}" step="0.1"></div>
+      <div class="fg"><label class="fl">Germination %</label><input class="fi" id="f_germ" type="number" value="${m.germination||''}" step="0.1"></div>
+    </div>
+    <div class="fg"><label class="fl">Remark</label><input class="fi" id="f_rem" type="text" value="${m.remark||''}"></div>
+  </div>
+  <button class="btn btn-p" onclick="saveInward()">${editingSlip?'Update Slip':'Save Slip'}</button>
+  ${editingSlip?`<button class="btn btn-s" onclick="editingSlip=null;renderAdd()">Cancel Edit</button>`:''}
+  `;
+}
+
+function gradingForm(){
+  const key=editingGradeKey||'';
+  const parts=(key||'').split('||');
+  const gSup=parts[0]||'';
+  const gVar=parts[1]||'';
+  const idx=editingGradeIdx;
+  const ses=(idx!=null&&GRADE_SESSIONS[key])?GRADE_SESSIONS[key][idx]||{}:{};
+
+  return`
+  <div class="sh">${idx!=null?'✏ Edit Grading Session':'New Grading Session'}</div>
+  <div class="cd">
+    <div class="fg"><label class="fl">Supplier</label>
+      <select class="fs" id="g_sup" onchange="calcGrading()"><option value="">— Select Supplier —</option>${allSups.map(s=>`<option value="${s}" ${gSup===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fl">Variety</label>
+      <select class="fs" id="g_var" onchange="calcGrading()"><option value="">— Select Variety —</option>${allVars.map(v=>`<option value="${v}" ${gVar===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fl">Weight Recpt (SUMIFS Wgt-Bag)</label><div class="fc tel" id="g_wtr">Select above</div></div>
+    <div class="fg"><label class="fl">Session Date</label><input class="fi" id="g_date" type="date" value="${ses.date||new Date().toISOString().slice(0,10)}"></div>
+  </div>
+  <div class="cd">
+    <div class="fr">
+      <div class="fg"><label class="fl">Graded Bags</label><input class="fi" id="g_bags" type="number" value="${ses.bags||''}" oninput="calcGrading()"></div>
+      <div class="fg"><label class="fl">Bag Size (kg)</label><input class="fi" id="g_bsz" type="number" value="${ses.bag_size||''}" oninput="calcGrading()"></div>
+    </div>
+    <div class="fg"><label class="fl">Graded Loose (qtl)</label><input class="fi" id="g_loose" type="number" value="${ses.loose||0}" step="0.01" oninput="calcGrading()"></div>
+    <div class="fg"><label class="fl">Total Graded = (Bags×Size×0.01)+Loose</label><div class="fc tel" id="g_tot">—</div></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Undersize (qtl)</label><input class="fi" id="g_us" type="number" value="${ses.undersize||0}" step="0.01" oninput="calcGrading()"></div>
+      <div class="fg"><label class="fl">Ghamsi (qtl)</label><input class="fi" id="g_gh" type="number" value="${ses.ghamsi||0}" step="0.01" oninput="calcGrading()"></div>
+    </div>
+    <div class="fg"><label class="fl">Final Graded = Total+Undersize+Ghamsi</label><div class="fc" id="g_fin" style="color:var(--pur)">—</div></div>
+    <div class="fg"><label class="fl">Difference (Wt Recpt − Final Graded)</label><div class="fc" id="g_diff">—</div></div>
+  </div>
+  <div class="cd">
+    <div class="fr">
+      <div class="fg"><label class="fl">Moisture %</label><input class="fi" id="g_moi" type="number" value="${ses.moisture||''}" step="0.1"></div>
+      <div class="fg"><label class="fl">Germination %</label><input class="fi" id="g_germ" type="number" value="${ses.germ||''}" step="0.1"></div>
+    </div>
+    <div class="fg"><label class="fl">Remark</label><input class="fi" id="g_rem" type="text" value="${ses.remark||''}"></div>
+  </div>
+  <button class="btn btn-p" onclick="saveGradeSession()">Save Grading Session</button>
+  ${idx!=null?`<button class="btn btn-s" onclick="editingGradeKey=null;editingGradeIdx=null;renderAdd()">Cancel</button>`:''}
+  `;
+}
+
+function packingForm(){
+  const key=editingPackKey||'';
+  const parts2=(key||'').split('||');
+  const pSup=parts2[0]||'';
+  const pVar=parts2[1]||'';
+  const idx=editingPackIdx;
+  const ses=(idx!=null&&PACK_SESSIONS[key])?PACK_SESSIONS[key][idx]||{}:{};
+
+  return`
+  <div class="sh">${idx!=null?'✏ Edit Packing Session':'New Packing Session'}</div>
+  <div class="cd">
+    <div class="fg"><label class="fl">Supplier</label>
+      <select class="fs" id="p_sup" onchange="calcPacking()"><option value="">— Select Supplier —</option>${allSups.map(s=>`<option value="${s}" ${pSup===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fl">Variety</label>
+      <select class="fs" id="p_var" onchange="calcPacking()"><option value="">— Select Variety —</option>${allVars.map(v=>`<option value="${v}" ${pVar===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fl">Total Graded (Packing Input)</label><div class="fc tel" id="p_gin">Select above</div></div>
+    <div class="fg"><label class="fl">Session Date</label><input class="fi" id="p_date" type="date" value="${ses.date||new Date().toISOString().slice(0,10)}"></div>
+  </div>
+  <div class="cd">
+    <div class="fr">
+      <div class="fg"><label class="fl">Pack Bags</label><input class="fi" id="p_bags" type="number" value="${ses.bags||''}" oninput="calcPacking()"></div>
+      <div class="fg"><label class="fl">Bag Size (kg)</label><input class="fi" id="p_bsz" type="number" value="${ses.bag_size||''}" oninput="calcPacking()"></div>
+    </div>
+    <div class="fg"><label class="fl">Pack Loose (qtl)</label><input class="fi" id="p_loose" type="number" value="${ses.loose||0}" step="0.01" oninput="calcPacking()"></div>
+    <div class="fg"><label class="fl">Total Packed = (Bags×Size×0.01)+Loose</label><div class="fc grn" id="p_tot">—</div></div>
+    <div class="fg"><label class="fl">Ghamsi (qtl)</label><input class="fi" id="p_gh" type="number" value="${ses.ghamsi||0}" step="0.01" oninput="calcPacking()"></div>
+    <div class="fg"><label class="fl">Final Packed = Total+Ghamsi</label><div class="fc" id="p_fin" style="color:var(--pur)">—</div></div>
+    <div class="fg"><label class="fl">Difference (Graded − Final Packed)</label><div class="fc" id="p_diff">—</div></div>
+  </div>
+  <div class="cd">
+    <div class="fr">
+      <div class="fg"><label class="fl">Lot No</label><input class="fi" id="p_lot" type="text" value="${ses.lot||''}"></div>
+      <div class="fg"><label class="fl">Location</label><input class="fi" id="p_loc" type="text" value="${ses.location||''}"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Moisture %</label><input class="fi" id="p_moi" type="number" value="${ses.moisture||''}" step="0.1"></div>
+      <div class="fg"><label class="fl">Germination %</label><input class="fi" id="p_germ" type="number" value="${ses.germ||''}" step="0.1"></div>
+    </div>
+  </div>
+  <button class="btn btn-p" onclick="savePackSession()">Save Packing Session</button>
+  ${idx!=null?`<button class="btn btn-s" onclick="editingPackKey=null;editingPackIdx=null;renderAdd()">Cancel</button>`:''}
+  `;
+}
+
+// Calculations
+function g(id){const e=document.getElementById(id);return e?e.value:'';}
+function sv(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function sc2(id,v,clr){const e=document.getElementById(id);if(e){e.textContent=v;if(clr)e.style.color=clr;}}
+
+function calcInward(){
+  const f=+g('f_f')||0,s=+g('f_s')||0,bags=+g('f_bags')||0,sz=+g('f_size')||0,rate=+g('f_rate')||0;
+  const nwt=f-s, bwgt=Math.ceil(bags*sz);
+  const wb=(nwt-bwgt)/100, bo=Math.ceil((nwt/90)*0.003*100)/100, nw=wb-bo;
+  const amt=rate&&nw?rate*nw:0;
+  sv('ci_wb',nwt>0?wb.toFixed(3)+' qtl':'—');
+  sv('ci_bo',nwt>0?bo.toFixed(3)+' qtl':'—');
+  sv('ci_nw',nwt>0?nw.toFixed(3)+' qtl':'—');
+  sv('ci_amt',amt>0?frs(amt):'—');
+}
+
+function calcGrading(){
+  const sup=g('g_sup'),vari=g('g_var');
+  if(sup&&vari){
+    const rows=DATA().filter(r=>String(r.supplier)===sup&&String(r.variety)===vari);
+    const wtr=rows.reduce((a,r)=>a+(+r.wgt_bag||0),0);
+    sv('g_wtr',wtr.toFixed(3)+' qtl ('+rows.length+' slips)');
+    const bags=+g('g_bags')||0,bsz=+g('g_bsz')||0,loose=+g('g_loose')||0;
+    const us=+g('g_us')||0,gh=+g('g_gh')||0;
+    const tot=(bags*bsz*0.01)+loose,fin=tot+us+gh,diff=wtr-fin;
+    sv('g_tot',tot>0?tot.toFixed(3)+' qtl':'—');
+    sv('g_fin',fin>0?fin.toFixed(3)+' qtl':'—');
+    sc2('g_diff',diff!==0?(diff>0?'+':'')+diff.toFixed(3)+' qtl':'—',diff<0?'var(--red)':'var(--grn)');
+  }
+}
+
+function calcPacking(){
+  const sup=g('p_sup'),vari=g('p_var');
+  if(sup&&vari){
+    const rows=DATA().filter(r=>String(r.supplier)===sup&&String(r.variety)===vari&&r.total_graded);
+    const gin=rows.reduce((a,r)=>a+(+r.total_graded||0),0);
+    const ps=PACK_SESSIONS[`${sup}||${vari}`]||[];
+    const prevPacked=ps.reduce((a,s)=>a+(+s.total_packed||0),0);
+    sv('p_gin',gin.toFixed(3)+' qtl (prev packed: '+prevPacked.toFixed(2)+')');
+    const bags=+g('p_bags')||0,bsz=+g('p_bsz')||0,loose=+g('p_loose')||0,gh=+g('p_gh')||0;
+    const tot=(bags*bsz*0.01)+loose,fin=tot+gh,diff=gin-fin;
+    sv('p_tot',tot>0?tot.toFixed(3)+' qtl':'—');
+    sv('p_fin',fin>0?fin.toFixed(3)+' qtl':'—');
+    sc2('p_diff',diff!==0?(diff>0?'+':'')+diff.toFixed(3)+' qtl':'—',diff<0?'var(--red)':'var(--grn)');
+  }
+}
+
+// Save
+function saveInward(){
+  const sno=+g('f_sno');
+  if(!sno){showToast('Enter slip number!');return;}
+  // BUG B FIX: use editingSlip as the target key when editing (not f_sno which user may have changed)
+  const targetKey = editingSlip || sno;
+  const inBase = BASE.find(r=>r.slipno===sno);
+  const inNew = NEW_SLIPS.findIndex(r=>r.slipno===(editingSlip||sno));
+  const isNew = !editingSlip && !inBase && inNew===-1;
+  const data = {slipno:sno, date:g('f_date'), truck:g('f_truck'),
+    first_wt:+g('f_f')||0, second_wt:+g('f_s')||0,
+    net_wt:(+g('f_f')||0)-(+g('f_s')||0),
+    bags:+g('f_bags')||0, size:+g('f_size')||0,
+    supplier:g('f_sup'), variety:g('f_var'),
+    rate:+g('f_rate')||null, time:null,
+    moisture:g('f_moi')||null, germination:g('f_germ')||null, remark:g('f_rem')||null};
+  if(isNew){
+    NEW_SLIPS.push(data);
+  } else if(inNew>=0){
+    NEW_SLIPS[inNew]=data;
+  } else {
+    EDITS[editingSlip||sno]=data;
+  }
+  refreshLists();
+  saveEdits();
+  showToast(editingSlip?'Slip #'+sno+' updated!':'Slip #'+sno+' saved!');
+  editingSlip=null; renderAdd(); renderDash();
+}
+
+function saveGradeSession(){
+  const sup=g('g_sup'),vari=g('g_var');
+  if(!sup||!vari){showToast('Select supplier & variety');return;}
+  const key=`${sup}||${vari}`;
+  const bags=+g('g_bags')||0,bsz=+g('g_bsz')||0,loose=+g('g_loose')||0;
+  const us=+g('g_us')||0,gh=+g('g_gh')||0;
+  const tot=(bags*bsz*0.01)+loose,fin=tot+us+gh;
+  const rows=DATA().filter(r=>String(r.supplier)===sup&&String(r.variety)===vari);
+  const wtr=rows.reduce((a,r)=>a+(+r.wgt_bag||0),0);
+  const ses={date:g('g_date'),bags,bag_size:bsz,loose,undersize:us,ghamsi:gh,
+    total_graded:+tot.toFixed(4),final_graded:+fin.toFixed(4),wt_recpt:+wtr.toFixed(4),
+    diff:+(wtr-fin).toFixed(4),moisture:g('g_moi')||null,germ:g('g_germ')||null,remark:g('g_rem')||null};
+  if(!GRADE_SESSIONS[key]) GRADE_SESSIONS[key]=[];
+  if(editingGradeIdx!=null) GRADE_SESSIONS[key][editingGradeIdx]=ses;
+  else GRADE_SESSIONS[key].push(ses);
+  saveGradeSessions();
+  showToast('Grading session saved!');
+  editingGradeKey=null;editingGradeIdx=null;renderAdd();
+}
+
+function savePackSession(){
+  const sup=g('p_sup'),vari=g('p_var');
+  if(!sup||!vari){showToast('Select supplier & variety');return;}
+  const key=`${sup}||${vari}`;
+  const bags=+g('p_bags')||0,bsz=+g('p_bsz')||0,loose=+g('p_loose')||0,gh=+g('p_gh')||0;
+  const tot=(bags*bsz*0.01)+loose,fin=tot+gh;
+  const rows=DATA().filter(r=>String(r.supplier)===sup&&String(r.variety)===vari&&r.total_graded);
+  const gin=rows.reduce((a,r)=>a+(+r.total_graded||0),0);
+  const ses={date:g('p_date'),bags,bag_size:bsz,loose,ghamsi:gh,
+    total_packed:+tot.toFixed(4),final_packed:+fin.toFixed(4),
+    diff:+(gin-fin).toFixed(4),lot:g('p_lot')||null,location:g('p_loc')||null,
+    moisture:g('p_moi')||null,germ:g('p_germ')||null};
+  if(!PACK_SESSIONS[key]) PACK_SESSIONS[key]=[];
+  if(editingPackIdx!=null) PACK_SESSIONS[key][editingPackIdx]=ses;
+  else PACK_SESSIONS[key].push(ses);
+  savePackSessions();
+  showToast('Packing session saved!');
+  editingPackKey=null;editingPackIdx=null;renderAdd();
+}
+
+function editSlip(sno){closeModal();editingSlip=sno;formTab='inward';renderAdd();}
+function editGradeSession(key,idx){editingGradeKey=key;editingGradeIdx=idx;formTab='grading';nav('Add',document.querySelectorAll('.nb')[2]);}
+function editPackSession(key,idx){editingPackKey=key;editingPackIdx=idx;formTab='packing';nav('Add',document.querySelectorAll('.nb')[2]);}
+
+// ── GRADING PAGE ──────────────────────────────────────────────────────────────
+function renderGrade(){
+  const el=document.getElementById('pgGrade');
+  const d=DATA();
+  const graded=d.filter(r=>r.total_graded!=null);
+
+  // Group by sup+var - use ALL data rows to compute wt_recpt (FIX G)
+  const grouped={};
+  // First pass: build groups from all data rows (not just graded)
+  d.forEach(r=>{
+    const key=`${r.supplier}||${r.variety}`;
+    if(!grouped[key]) grouped[key]={supplier:String(r.supplier),variety:String(r.variety),rows:[],wt_recpt:0,total_graded:0,final_graded:0,undersize:0};
+    const grp=grouped[key];
+    grp.wt_recpt += (+r.wgt_bag||0); // FIX G: sum all wgt_bag, not just graded rows
+  });
+  // Second pass: overlay grading data
+  graded.forEach(r=>{
+    const key=`${r.supplier}||${r.variety}`;
+    const grp=grouped[key];
+    grp.rows.push(r);
+    grp.total_graded=Math.max(grp.total_graded,+r.total_graded||0);
+    grp.final_graded=Math.max(grp.final_graded,+r.final_graded||0);
+    grp.undersize=Math.max(grp.undersize,+r.undersize||0);
+  });
+
+  // Add session groups (FIX G: compute wt_recpt from all data rows for session-only groups)
+  Object.entries(GRADE_SESSIONS).forEach(([key,sessions])=>{
+    if(!grouped[key]){
+      const [sup,vari]=key.split('||');
+      grouped[key]={supplier:sup,variety:vari,rows:[],wt_recpt:0,total_graded:0,final_graded:0,undersize:0};
+      // compute wt_recpt for session-only groups
+      grouped[key].wt_recpt = d.filter(r=>String(r.supplier)===sup&&String(r.variety)===vari).reduce((a,r)=>a+(+r.wgt_bag||0),0);
+    }
+    if(sessions.length>0){
+      const sesTotal=sessions.reduce((a,s)=>a+(+s.total_graded||0),0);
+      const sesFinal=sessions.reduce((a,s)=>a+(+s.final_graded||0),0);
+      const sesUS=sessions.reduce((a,s)=>a+(+s.undersize||0),0);
+      grouped[key].total_graded=Math.max(grouped[key].total_graded,sesTotal);
+      grouped[key].final_graded=Math.max(grouped[key].final_graded,sesFinal);
+      grouped[key].undersize=Math.max(grouped[key].undersize,sesUS);
+    }
+  });
+
+  const groups=Object.values(grouped).filter(grp=>grp.wt_recpt>0||grp.rows.length>0||(GRADE_SESSIONS[`${grp.supplier||''}||${grp.variety||''}`]||[]).length>0).sort((a,b)=>b.wt_recpt-a.wt_recpt);
+
+  const tWR=groups.reduce((a,g)=>a+g.wt_recpt,0);
+  const tFG=groups.reduce((a,g)=>a+g.final_graded,0);
+  const tUS=groups.reduce((a,g)=>a+g.undersize,0);
+  // FIX J: compute live remaining per group
+  const allGradeKeys = [...new Set([...graded.map(r=>`${r.supplier}||${r.variety}`), ...Object.keys(GRADE_SESSIONS)])];
+  const tRemG = allGradeKeys.reduce((a,key)=>{const [s,v]=key.split('||');return a+Math.max(0,getLiveGradeRem(s,v));},0);
+  const tRemP = allGradeKeys.reduce((a,key)=>{const [s,v]=key.split('||');const rem=getLivePackRem(s,v);return a+Math.max(0,rem||0);},0);
+
+  el.innerHTML=`
+  <div class="sh">Summary</div>
+  <div class="sg">
+    <div class="sc"><div class="sv c-tel">${tWR.toFixed(1)}</div><div class="sl">Wt Recpt (qtl)</div></div>
+    <div class="sc"><div class="sv c-pur">${tFG.toFixed(1)}</div><div class="sl">Final Graded</div></div>
+    <div class="sc"><div class="sv c-amb">${tUS.toFixed(1)}</div><div class="sl">Undersize</div></div>
+    <div class="sc"><div class="sv ${tWR-tFG<0?'c-red':'c-grn'}">${(tWR-tFG).toFixed(2)}</div><div class="sl">Grading Diff</div></div>
+  </div>
+  <div class="sh">Remaining Balances</div>
+  <div class="rem-card ${tRemG>0.1?'amb':'grn'}">
+    <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px">Remaining to Grade (All Slips)</div>
+    <div style="font-family:Rajdhani;font-size:22px;font-weight:700;color:${tRemG>0.1?'var(--amb)':'var(--grn)'}">${tRemG.toFixed(2)} qtl</div>
+    <div style="font-size:10px;color:var(--tx2)">Wgt-Bag − Total Graded − Undersize</div>
+  </div>
+  <div class="rem-card ${tRemP>0.1?'amb':'grn'}">
+    <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px">Remaining to Pack (All Graded)</div>
+    <div style="font-family:Rajdhani;font-size:22px;font-weight:700;color:${tRemP>0.1?'var(--blu)':'var(--grn)'}">${tRemP.toFixed(2)} qtl</div>
+    <div style="font-size:10px;color:var(--tx2)">Total Graded − Packed Qty + Pack Loose</div>
+  </div>
+  <div class="sh" style="display:flex;justify-content:space-between;align-items:center"><span>${groups.length} Groups</span><button class="btn btn-e btn-sm" onclick="editGradeSession('',null)">+ New Session</button></div>
+  ${groups.map(grp=>{
+    const key=`${grp.supplier}||${grp.variety}`;
+    const sessions=GRADE_SESSIONS[key]||[];
+    const pct=grp.wt_recpt>0?(grp.final_graded/grp.wt_recpt)*100:0;
+    const usPct=grp.wt_recpt>0?(grp.undersize/grp.wt_recpt)*100:0;
+    const diff=grp.wt_recpt-grp.final_graded;
+    // calc remaining for this group
+    const remG=Math.max(0,getLiveGradeRem(g.supplier,g.variety));
+    const remP=Math.max(0,getLivePackRem(g.supplier,g.variety)||0);
+    return`<div class="cd">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div><div style="font-size:13px;font-weight:600">${grp.supplier}</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:2px"><span class="vd" style="background:${vc(grp.variety)}"></span><span style="font-size:11px;color:var(--tx2)">${grp.variety}</span></div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:Rajdhani;font-size:16px;font-weight:700;color:var(--tel)">${grp.wt_recpt.toFixed(2)} <span style="font-size:9px">qtl</span></div>
+          <div style="font-size:9px;color:var(--tx3)">${graded.filter(r=>`${r.supplier}||${r.variety}`===key).length} slips${sessions.length?' + '+sessions.length+' ses':''}</div>
+        </div>
+      </div>
+      <div class="dg">
+        <div class="db"><div class="db-h">Graded</div>
+          <div class="kv"><span class="kk">Total</span><span class="kv-v c-tel">${grp.total_graded.toFixed(2)}</span></div>
+          <div class="kv"><span class="kk">U/S</span><span class="kv-v c-amb">${grp.undersize.toFixed(2)}</span></div>
+          <div class="kv"><span class="kk">Final</span><span class="kv-v c-pur">${grp.final_graded.toFixed(2)}</span></div>
+        </div>
+        <div class="db"><div class="db-h">Remaining</div>
+          <div class="kv"><span class="kk">Rem Grade</span><span class="kv-v" style="color:${getLiveGradeRem(grp.supplier,grp.variety)>0.01?'var(--amb)':'var(--grn)'}">
+            ${getLiveGradeRem(grp.supplier,grp.variety).toFixed(3)}</span></div>
+          <div class="kv"><span class="kk">Rem Pack</span><span class="kv-v" style="color:${(getLivePackRem(grp.supplier,grp.variety)||0)>0.01?'var(--blu)':'var(--grn)'}">
+            ${getLivePackRem(grp.supplier,grp.variety)!=null?getLivePackRem(grp.supplier,grp.variety).toFixed(3):'—'}</span></div>
+          <div class="kv"><span class="kk">U/S %</span><span class="kv-v c-amb">${usPct.toFixed(1)}%</span></div>
+        </div>
+      </div>
+      <div class="pw" style="margin-top:7px">
+        <div class="pl"><span>Graded/Recpt</span><span>${pct.toFixed(1)}%</span></div>
+        <div class="pb"><div class="pf tel" style="width:${Math.min(100,pct)}%"></div></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-e btn-sm" onclick="editGradeSession('${key}',null)">+ Grade Session</button>
+        <button class="btn btn-e btn-sm" onclick="editPackSession('${key}',null)" style="background:var(--grn-d);color:var(--grn);border-color:var(--grn)">+ Pack Session</button>
+      </div>
+    </div>`;
+  }).join('')}
+  `;
+}
+
+// ── LEDGER ────────────────────────────────────────────────────────────────────
+function renderLedger(){
+  const el=document.getElementById('pgLedger');
+  const d=DATA();
+
+  // Group by supplier+variety
+  const grouped={};
+  d.forEach(r=>{
+    const key=`${r.supplier}||${r.variety}`;
+    if(!grouped[key]) grouped[key]={supplier:String(r.supplier),variety:String(r.variety),slips:[],totalNetWt:0,totalAmt:0};
+    const g=grouped[key];
+    g.slips.push(r);
+    g.totalNetWt+=+r.net_weight||0;
+    // Rate: use ledger override, else slip rate, else 0
+    const rate=LEDGER_RATES[key]||r.rate;
+    if(rate) g.totalAmt+=(+r.net_weight||0)*(+rate);
+  });
+
+  const groups=Object.values(grouped).sort((a,b)=>b.totalNetWt-a.totalNetWt);
+  const grandNetWt=groups.reduce((a,g)=>a+g.totalNetWt,0);
+  const grandAmt=groups.reduce((a,g)=>a+g.totalAmt,0);
+  const withRate=groups.filter(g=>g.totalAmt>0).length;
+
+  el.innerHTML=`
+  <div class="sh">Ledger Summary</div>
+  <div class="sg">
+    <div class="sc"><div class="sv c-blu">${grandNetWt.toFixed(1)}</div><div class="sl">Total Net Wt (qtl)</div></div>
+    <div class="sc"><div class="sv c-grn" style="font-size:16px">${grandAmt>0?frs(grandAmt):'—'}</div><div class="sl">Total Amount</div></div>
+    <div class="sc"><div class="sv c-acc">${groups.length}</div><div class="sl">Farmer Groups</div></div>
+    <div class="sc"><div class="sv c-amb">${withRate}</div><div class="sl">With Rate</div></div>
+  </div>
+  <div class="sh">Farmer × Variety Ledger</div>
+  <div class="cd" style="padding:0">
+    ${groups.map((g,i)=>{
+      const key=`${grp.supplier}||${grp.variety}`;
+      const rate=LEDGER_RATES[key]||g.slips[0]?.rate;
+      const amt=rate?g.totalNetWt*(+rate):null;
+      return`<div class="ledger-row" style="padding:9px 12px" onclick="openLedgerGroup('${key}')">
+        <div class="lr-no">${i+1}</div>
+        <div class="lr-info">
+          <div class="lr-name">${g.supplier}</div>
+          <div style="display:flex;align-items:center;gap:3px;margin-top:1px"><span class="vd" style="background:${vc(g.variety)};width:6px;height:6px"></span><span class="lr-sub">${g.variety} · ${g.slips.length} slips</span></div>
+        </div>
+        <div class="lr-wt">
+          <div class="lr-wt-val c-blu">${g.totalNetWt.toFixed(2)}</div>
+          <div class="lr-wt-lbl">qtl net wt</div>
+        </div>
+        <div class="lr-amt">
+          ${rate?`<div class="lr-amt-val">${frs(amt)}</div><div class="lr-wt-lbl">@₹${rate}</div>`:`<div style="font-size:11px;color:var(--tx3)">Set rate</div>`}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>
+  `;
+}
+
+function openLedgerGroup(key){
+  const [sup,vari]=key.split('||');
+  const rows=DATA().filter(r=>String(r.supplier)===sup&&String(r.variety)===vari);
+  const savedRate=LEDGER_RATES[key]||rows[0]?.rate||'';
+  const totalNetWt=rows.reduce((a,r)=>a+(+r.net_weight||0),0);
+
+  document.getElementById('modalBody').innerHTML=`
+  <div class="mt" style="font-size:16px">${sup}</div>
+  <div style="display:flex;gap:5px;margin-bottom:13px">
+    <span class="pi gray">${vari}</span>
+    <span class="pi blu">${rows.length} slips</span>
+  </div>
+  <div class="sg">
+    <div class="sc"><div class="sv c-blu">${totalNetWt.toFixed(3)}</div><div class="sl">Total Net Wt (qtl)</div></div>
+    <div class="sc"><div class="sv c-grn" style="font-size:15px" id="led_amt">${savedRate?frs(totalNetWt*(+savedRate)):'Set rate'}</div><div class="sl">Amount</div></div>
+  </div>
+  <div class="fg" style="margin-bottom:12px">
+    <label class="fl">Rate (₹/qtl)</label>
+    <div style="display:flex;gap:7px">
+      <input class="fi" id="led_rate" type="number" value="${savedRate}" style="flex:1" oninput="previewLedgerAmt('${key}',${totalNetWt})">
+      <button class="btn btn-p btn-sm" onclick="saveLedgerRate('${key}',${totalNetWt})">Set</button>
+    </div>
+  </div>
+  <div class="sh">Slip-wise Ledger</div>
+  <div class="cd" style="padding:0">
+    <div style="display:flex;padding:8px 12px;font-size:10px;color:var(--tx3);border-bottom:1px solid var(--bdr2);font-weight:600;text-transform:uppercase;letter-spacing:.5px">
+      <span style="flex:0 0 44px">Slip</span><span style="flex:1">Date / Truck</span><span style="width:70px;text-align:right">Net Wt</span><span style="width:80px;text-align:right">Amount</span>
+    </div>
+    ${rows.map(r=>{
+      const rate=LEDGER_RATES[key]||r.rate;
+      const amt=rate?(+r.net_weight||0)*(+rate):null;
+      return`<div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--bdr2)" onclick="closeModal();openSlip(${r.slipno})">
+        <span style="flex:0 0 44px;font-family:Rajdhani;font-size:13px;font-weight:700;color:var(--acc)">#${r.slipno}</span>
+        <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.date||'?'} ${r.time||''}</div><div style="font-size:10px;color:var(--tx3)">${r.truck||'—'}</div></div>
+        <div style="width:70px;text-align:right"><div style="font-family:Rajdhani;font-size:13px;font-weight:700;color:var(--blu)">${(+r.net_weight||0).toFixed(2)}</div><div style="font-size:9px;color:var(--tx3)">qtl</div></div>
+        <div style="width:80px;text-align:right"><div style="font-family:Rajdhani;font-size:13px;font-weight:700;color:var(--grn)">${amt?frs(amt):'—'}</div></div>
+      </div>`;
+    }).join('')}
+    <div style="display:flex;align-items:center;padding:10px 12px;background:var(--sur2)">
+      <span style="flex:0 0 44px"></span>
+      <span style="flex:1;font-size:11px;font-weight:600;color:var(--tx2)">TOTAL</span>
+      <div style="width:70px;text-align:right;font-family:Rajdhani;font-size:15px;font-weight:700;color:var(--blu)">${totalNetWt.toFixed(2)}</div>
+      <div style="width:80px;text-align:right;font-family:Rajdhani;font-size:15px;font-weight:700;color:var(--grn)">${savedRate?frs(totalNetWt*(+savedRate)):'—'}</div>
+    </div>
+  </div>
+  <button class="btn btn-s" onclick="closeModal()" style="margin-top:10px">Close</button>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+
+function previewLedgerAmt(key,totalNetWt){
+  const rate=+document.getElementById('led_rate')?.value||0;
+  const el=document.getElementById('led_amt');
+  if(el) el.textContent=rate?frs(totalNetWt*rate):'—';
+}
+
+function saveLedgerRate(key,totalNetWt){
+  const rate=+document.getElementById('led_rate')?.value;
+  if(!rate){showToast('Enter a rate!');return;}
+  LEDGER_RATES[key]=rate;
+  saveLedgerRates();
+  showToast('Rate saved: ₹'+rate+'/qtl');
+  closeModal();
+  renderLedger();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.remove('show');
+  void t.offsetWidth;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2300);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init(){
+  await persistLoad();
+  refreshLists();
+  document.getElementById('topBadge').textContent=DATA().length+' Slips';
+  renderDash();
+}
+init();
+</script>
+</body>
+</html>

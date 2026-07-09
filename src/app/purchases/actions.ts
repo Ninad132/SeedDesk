@@ -10,15 +10,12 @@ export type SavePurchaseInput = {
   lotNo: string;
   purchaseDate: string;
   rate: number;
+  seedType: "TL" | "VS";
   sourceState: string;
   supplierName: string;
   variety: string;
   weight: number;
 };
-
-function getInventoryColumn1(variety: string) {
-  return variety.trim().toUpperCase().endsWith("KG") ? "TL" : "VS";
-}
 
 export async function savePurchase(input: SavePurchaseInput) {
   const bags = Number(input.bags) || 0;
@@ -26,6 +23,7 @@ export async function savePurchase(input: SavePurchaseInput) {
   const rate = Number(input.rate) || 0;
   const column3 = input.column3.trim();
   const lotNo = input.lotNo.trim();
+  const seedType = input.seedType === "TL" ? "TL" : "VS";
   const variety = input.variety.trim() || [column3, lotNo].filter(Boolean).join(" ");
 
   if (!column3 || !lotNo || !variety || bags <= 0 || weight <= 0) {
@@ -83,7 +81,6 @@ export async function savePurchase(input: SavePurchaseInput) {
   }
 
   let seedLotId = existingLot?.id;
-  const inventoryColumn1 = getInventoryColumn1(variety);
 
   if (seedLotId) {
     const { error: lotUpdateError } = await db
@@ -92,7 +89,7 @@ export async function savePurchase(input: SavePurchaseInput) {
         current_bags: Number(existingLot.current_bags ?? 0) + bags,
         opening_bags: Number(existingLot.opening_bags ?? 0) + bags,
         rate,
-        seed_class: inventoryColumn1,
+        seed_class: seedType,
         source_state: input.sourceState.trim() || null
       })
       .eq("id", seedLotId);
@@ -113,7 +110,7 @@ export async function savePurchase(input: SavePurchaseInput) {
         product_id: productId,
         rate,
         received_at: input.purchaseDate,
-        seed_class: inventoryColumn1,
+        seed_class: seedType,
         source_state: input.sourceState.trim() || null
       })
       .select("id")
@@ -240,6 +237,216 @@ export async function deletePurchaseItem(purchaseItemId: string) {
   revalidatePath("/purchases");
   revalidatePath("/inventory");
   revalidatePath("/invoice");
+  revalidatePath("/reports");
+
+  return { deleted: true };
+}
+
+export async function deleteInwardSlip(inwardSlipId: string) {
+  if (!inwardSlipId) {
+    return { error: "Inward slip is required." };
+  }
+
+  const supabase = createServerAnonSupabaseClient();
+  const db = supabase as any;
+
+  const { data: inward, error: inwardReadError } = await db
+    .from("inward_slips")
+    .select("id,purchase_id,seed_lot_id,bags,material_name,supplier_name")
+    .eq("id", inwardSlipId)
+    .eq("company_id", demoSession.company.id)
+    .single();
+
+  if (inwardReadError) {
+    return { error: `Could not read inward slip: ${inwardReadError.message}` };
+  }
+
+  const { data: packingRows, error: packingReadError } = await db
+    .from("packing_sessions")
+    .select("id,seed_lot_id")
+    .eq("company_id", demoSession.company.id)
+    .eq("inward_slip_id", inward.id);
+
+  if (packingReadError) {
+    return { error: `Could not read linked packing rows: ${packingReadError.message}` };
+  }
+
+  const packedSeedLotIds = Array.from(
+    new Set((packingRows ?? []).map((row: { seed_lot_id: string | null }) => row.seed_lot_id).filter(Boolean))
+  ) as string[];
+  const affectedSeedLotIds = Array.from(new Set([inward.seed_lot_id, ...packedSeedLotIds].filter(Boolean))) as string[];
+
+  if (affectedSeedLotIds.length > 0) {
+    const { data: invoiceItems, error: invoiceItemsReadError } = await db
+      .from("invoice_items")
+      .select("invoice_id")
+      .eq("company_id", demoSession.company.id)
+      .in("seed_lot_id", affectedSeedLotIds);
+
+    if (invoiceItemsReadError) {
+      return { error: `Could not read linked invoice rows: ${invoiceItemsReadError.message}` };
+    }
+
+    const invoiceIds = Array.from(
+      new Set((invoiceItems ?? []).map((item: { invoice_id: string }) => item.invoice_id).filter(Boolean))
+    ) as string[];
+
+    if (invoiceIds.length > 0) {
+      const { error: paymentDeleteError } = await db
+        .from("payments")
+        .delete()
+        .eq("company_id", demoSession.company.id)
+        .in("invoice_id", invoiceIds);
+
+      if (paymentDeleteError) {
+        return { error: `Could not delete linked invoice payments: ${paymentDeleteError.message}` };
+      }
+
+      const { error: itemDeleteError } = await db
+        .from("invoice_items")
+        .delete()
+        .eq("company_id", demoSession.company.id)
+        .in("invoice_id", invoiceIds);
+
+      if (itemDeleteError) {
+        return { error: `Could not delete linked invoice items: ${itemDeleteError.message}` };
+      }
+
+      const { error: invoiceDeleteError } = await db
+        .from("invoices")
+        .delete()
+        .eq("company_id", demoSession.company.id)
+        .in("id", invoiceIds);
+
+      if (invoiceDeleteError) {
+        return { error: `Could not delete linked invoices: ${invoiceDeleteError.message}` };
+      }
+    }
+
+    const { error: adjustmentDeleteError } = await db
+      .from("stock_adjustments")
+      .delete()
+      .eq("company_id", demoSession.company.id)
+      .in("seed_lot_id", affectedSeedLotIds);
+
+    if (adjustmentDeleteError) {
+      return { error: `Could not delete linked stock adjustments: ${adjustmentDeleteError.message}` };
+    }
+  }
+
+  const { error: packingDeleteError } = await db
+    .from("packing_sessions")
+    .delete()
+    .eq("company_id", demoSession.company.id)
+    .eq("inward_slip_id", inward.id);
+
+  if (packingDeleteError) {
+    return { error: `Could not delete linked packing rows: ${packingDeleteError.message}` };
+  }
+
+  const { error: gradingDeleteError } = await db
+    .from("grading_sessions")
+    .delete()
+    .eq("company_id", demoSession.company.id)
+    .eq("inward_slip_id", inward.id);
+
+  if (gradingDeleteError) {
+    return { error: `Could not delete linked grading rows: ${gradingDeleteError.message}` };
+  }
+
+  if (inward.purchase_id && inward.seed_lot_id) {
+    const { data: item, error: itemReadError } = await db
+      .from("purchase_items")
+      .select("id,bags")
+      .eq("purchase_id", inward.purchase_id)
+      .eq("seed_lot_id", inward.seed_lot_id)
+      .eq("company_id", demoSession.company.id)
+      .maybeSingle();
+
+    if (itemReadError) {
+      return { error: `Could not read linked purchase item: ${itemReadError.message}` };
+    }
+
+    if (item) {
+      const { data: lot, error: lotReadError } = await db
+        .from("seed_lots")
+        .select("current_bags,opening_bags")
+        .eq("id", inward.seed_lot_id)
+        .eq("company_id", demoSession.company.id)
+        .single();
+
+      if (lotReadError) {
+        return { error: `Could not read linked stock: ${lotReadError.message}` };
+      }
+
+      const bags = Number(item.bags ?? inward.bags ?? 0);
+      const currentBags = Number(lot.current_bags ?? 0);
+      const openingBags = Number(lot.opening_bags ?? 0);
+
+      if (bags > currentBags) {
+        return { error: "Cannot delete this inward slip because linked stock has already been consumed." };
+      }
+
+      const { error: lotUpdateError } = await db
+        .from("seed_lots")
+        .update({
+          current_bags: currentBags - bags,
+          opening_bags: Math.max(openingBags - bags, 0)
+        })
+        .eq("id", inward.seed_lot_id)
+        .eq("company_id", demoSession.company.id);
+
+      if (lotUpdateError) {
+        return { error: `Could not reverse linked stock: ${lotUpdateError.message}` };
+      }
+
+      const { error: itemDeleteError } = await db
+        .from("purchase_items")
+        .delete()
+        .eq("id", item.id)
+        .eq("company_id", demoSession.company.id);
+
+      if (itemDeleteError) {
+        return { error: `Stock reversed, but linked purchase item delete failed: ${itemDeleteError.message}` };
+      }
+    }
+
+    await db
+      .from("purchases")
+      .delete()
+      .eq("id", inward.purchase_id)
+      .eq("company_id", demoSession.company.id);
+  }
+
+  const { error: inwardDeleteError } = await db
+    .from("inward_slips")
+    .delete()
+    .eq("id", inward.id)
+    .eq("company_id", demoSession.company.id);
+
+  if (inwardDeleteError) {
+    return { error: `Could not delete inward slip: ${inwardDeleteError.message}` };
+  }
+
+  if (affectedSeedLotIds.length > 0) {
+    const { error: lotDeleteError } = await db
+      .from("seed_lots")
+      .delete()
+      .eq("company_id", demoSession.company.id)
+      .in("id", affectedSeedLotIds);
+
+    if (lotDeleteError) {
+      return { error: `Source rows deleted, but linked inventory delete failed: ${lotDeleteError.message}` };
+    }
+  }
+
+  revalidatePath("/");
+  revalidatePath("/processing");
+  revalidatePath("/purchases");
+  revalidatePath("/inventory");
+  revalidatePath("/invoice");
+  revalidatePath("/invoices");
+  revalidatePath("/ledger");
   revalidatePath("/reports");
 
   return { deleted: true };

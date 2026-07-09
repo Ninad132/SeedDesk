@@ -13,9 +13,10 @@ The app should feel familiar to Vasundhara users who currently work from `Copy o
 | Bags | Number of bags received |
 | Weight | Packing size in kg |
 | Quantity | Bags x Weight / 100 |
-| Column1 | Sale rate |
-| Column2 | Optional remark/source |
-| RATE | Source/state marker in the current workbook |
+| Column1 | Sale rate, shown as `Rate` in the app |
+| Column2 | Removed from purchase entry for now |
+| RATE | Source/state marker in the current workbook, temporarily shown as `xyz` |
+| Seed type | App-only explicit field: `VS` government certified, `TL` unregistered |
 
 ## Inventory Sheet
 
@@ -27,7 +28,7 @@ The app should feel familiar to Vasundhara users who currently work from `Copy o
 | In Stock | Available bags |
 | RATE | Rate used for billing |
 | HOLD | Bags reserved/held |
-| Column 1 | TL/VS/class marker used by the current workbook |
+| Column 1 | Seed type: `VS` government certified, `TL` unregistered |
 
 ## Sale Sheet
 

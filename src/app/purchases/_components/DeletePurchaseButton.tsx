@@ -3,19 +3,19 @@
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { deletePurchaseItem } from "../actions";
+import { deleteInwardSlip } from "../actions";
 
 type DeletePurchaseButtonProps = {
-  purchaseItemId: string;
+  inwardSlipId: string;
 };
 
-export default function DeletePurchaseButton({ purchaseItemId }: DeletePurchaseButtonProps) {
+export default function DeletePurchaseButton({ inwardSlipId }: DeletePurchaseButtonProps) {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const [isDeleting, startDeleting] = useTransition();
 
   function deleteRow() {
-    const confirmed = window.confirm("Delete this purchase entry and reverse its stock?");
+    const confirmed = window.confirm("Delete this inward entry and reverse its linked purchase stock?");
 
     if (!confirmed) {
       return;
@@ -23,7 +23,7 @@ export default function DeletePurchaseButton({ purchaseItemId }: DeletePurchaseB
 
     setMessage("");
     startDeleting(async () => {
-      const result = await deletePurchaseItem(purchaseItemId);
+      const result = await deleteInwardSlip(inwardSlipId);
 
       if ("error" in result && result.error) {
         setMessage(result.error);

@@ -69,6 +69,9 @@ create table if not exists seed_lots (
   id uuid primary key default uuid_generate_v4(),
   company_id uuid not null references companies(id) on delete cascade,
   product_id uuid not null references products(id) on delete restrict,
+  inward_slip_id uuid,
+  grading_session_id uuid,
+  packing_session_id uuid,
   lot_number text not null,
   seed_class text,
   packing_kg numeric(8,2) not null default 40,
@@ -106,7 +109,11 @@ select
     when greatest(sl.current_bags - sl.hold_bags, 0) <= 0 then 'sold_out'
     when greatest(sl.current_bags - sl.hold_bags, 0) <= 10 then 'low_stock'
     else 'healthy'
-  end as stock_status
+  end as stock_status,
+  sl.source_state,
+  sl.inward_slip_id,
+  sl.grading_session_id,
+  sl.packing_session_id
 from seed_lots sl
 join products p on p.id = sl.product_id;
 
@@ -148,6 +155,111 @@ create table if not exists stock_adjustments (
 
 create index if not exists stock_adjustments_company_date_idx on stock_adjustments(company_id, adjustment_date desc);
 create index if not exists stock_adjustments_lot_idx on stock_adjustments(seed_lot_id);
+
+create table if not exists inward_slips (
+  id uuid primary key default uuid_generate_v4(),
+  company_id uuid not null references companies(id) on delete cascade,
+  slip_no integer not null,
+  truck_no text,
+  first_wt numeric(12,2) not null default 0,
+  datetime_in timestamptz,
+  second_wt numeric(12,2) not null default 0,
+  datetime_out timestamptz,
+  net_wt numeric(12,2) not null default 0,
+  material_name text not null,
+  supplier_name text not null,
+  bags numeric(12,2) not null default 0,
+  bag_size numeric(8,2) not null default 0,
+  bag_wt numeric(12,2) not null default 0,
+  wgt_bag numeric(12,4) not null default 0,
+  bouncing numeric(12,4) not null default 0,
+  net_weight_qtl numeric(12,4) not null default 0,
+  moisture numeric(8,2),
+  germination numeric(8,2),
+  remark text,
+  rate numeric(12,2) not null default 0,
+  amount numeric(12,2) not null default 0,
+  cheque_amount numeric(12,2) not null default 0,
+  cash_amount numeric(12,2) not null default 0,
+  seed_type text not null default 'VS' check (seed_type in ('VS', 'TL')),
+  purchase_id uuid references purchases(id) on delete set null,
+  seed_lot_id uuid references seed_lots(id) on delete set null,
+  shift text,
+  created_by uuid references app_users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(company_id, slip_no)
+);
+
+create index if not exists inward_slips_company_date_idx on inward_slips(company_id, datetime_in desc);
+create index if not exists inward_slips_company_supplier_variety_idx on inward_slips(company_id, supplier_name, material_name);
+
+create table if not exists grading_sessions (
+  id uuid primary key default uuid_generate_v4(),
+  company_id uuid not null references companies(id) on delete cascade,
+  inward_slip_id uuid references inward_slips(id) on delete cascade,
+  grading_date date not null,
+  supplier_name text not null,
+  variety text not null,
+  weight_receipt numeric(12,4) not null default 0,
+  graded_bags numeric(12,2) not null default 0,
+  graded_bag_size numeric(8,2) not null default 0,
+  graded_quantity numeric(12,4) not null default 0,
+  graded_loose numeric(12,4) not null default 0,
+  total_graded numeric(12,4) not null default 0,
+  undersize numeric(12,4) not null default 0,
+  us_bags numeric(12,2) not null default 0,
+  undersize_percent numeric(8,4) not null default 0,
+  final_graded numeric(12,4) not null default 0,
+  location text,
+  difference numeric(12,4) not null default 0,
+  moisture numeric(8,2),
+  germination numeric(8,2),
+  remark text,
+  created_by uuid references app_users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists grading_sessions_company_date_idx on grading_sessions(company_id, grading_date desc);
+create index if not exists grading_sessions_company_supplier_variety_idx on grading_sessions(company_id, supplier_name, variety);
+create index if not exists grading_sessions_inward_slip_idx on grading_sessions(inward_slip_id);
+
+create table if not exists packing_sessions (
+  id uuid primary key default uuid_generate_v4(),
+  company_id uuid not null references companies(id) on delete cascade,
+  inward_slip_id uuid references inward_slips(id) on delete cascade,
+  grading_session_id uuid references grading_sessions(id) on delete cascade,
+  packing_date date not null,
+  supplier_name text not null,
+  variety text not null,
+  graded_input numeric(12,4) not null default 0,
+  packed_quantity_before numeric(12,4) not null default 0,
+  remaining_quantity numeric(12,4) not null default 0,
+  no_of_bags numeric(12,2) not null default 0,
+  packing_bag_size numeric(8,2) not null default 0,
+  packing_quantity numeric(12,4) not null default 0,
+  packing_loose numeric(12,4) not null default 0,
+  ghamsi numeric(12,4) not null default 0,
+  total_packed numeric(12,4) not null default 0,
+  difference numeric(12,4) not null default 0,
+  moisture numeric(8,2),
+  germination numeric(8,2),
+  lot_no text,
+  seed_type text not null default 'VS' check (seed_type in ('VS', 'TL')),
+  rate numeric(12,2) not null default 0,
+  seed_lot_id uuid references seed_lots(id) on delete set null,
+  location text,
+  remark text,
+  created_by uuid references app_users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists packing_sessions_company_date_idx on packing_sessions(company_id, packing_date desc);
+create index if not exists packing_sessions_company_supplier_variety_idx on packing_sessions(company_id, supplier_name, variety);
+create index if not exists packing_sessions_inward_slip_idx on packing_sessions(inward_slip_id);
+create index if not exists packing_sessions_grading_session_idx on packing_sessions(grading_session_id);
 
 create table if not exists invoices (
   id uuid primary key default uuid_generate_v4(),

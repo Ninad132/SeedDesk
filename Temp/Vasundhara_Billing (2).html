@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vasundhara Billing</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f2ea;--card:#fff;--card2:#f0ebe0;--border:#ddd5c0;
+  --ink:#1a1208;--ink2:#5a4e38;--ink3:#a09070;
+  --green:#1a5c2a;--green2:#267a3a;--greenl:#e8f5eb;
+  --amber:#c47a00;--amberl:#fff8e8;
+  --red:#b52222;--redl:#fdeaea;
+  --blue:#1a3870;--bluel:#e8edf8;
+  --sans:'Noto Sans',sans-serif;
+  --deva:'Noto Sans Devanagari','Noto Sans',sans-serif;
+  --mono:'Courier Prime',monospace;
+  --r:10px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --nav-h:58px;--top-h:50px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;display:flex;flex-direction:column}
+#topbar{height:var(--top-h);background:var(--green);color:#fff;display:flex;align-items:center;padding:0 14px;flex-shrink:0;z-index:100;gap:10px}
+#topbar-title{font-size:15px;font-weight:700;flex:1}
+#topbar-sub{font-size:9px;opacity:.6;display:block;margin-top:1px}
+.topbar-btn{background:rgba(255,255,255,.18);border:none;color:#fff;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--sans);letter-spacing:.3px}
+#scroll-wrap{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+var(--safe-b)+8px)}
+.page{display:none;padding:10px 12px 8px;animation:fadeIn .18s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.page-title{font-size:18px;font-weight:700;margin-bottom:2px}
+.page-sub{font-size:11px;color:var(--ink3);margin-bottom:12px}
+#bottom-nav{height:var(--nav-h);background:var(--card);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:var(--safe-b)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--ink3);font-size:9px;font-weight:700;border:none;background:none;font-family:var(--sans);text-transform:uppercase;letter-spacing:.5px}
+.nav-item.active{color:var(--green)}
+.nav-item svg{width:20px;height:20px;stroke-width:1.8}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:10px}
+.card-title{font-size:11px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;text-transform:uppercase;letter-spacing:.6px;color:var(--ink2)}
+.badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.3px}
+.badge-g{background:var(--greenl);color:var(--green)}
+.badge-a{background:var(--amberl);color:var(--amber)}
+.badge-r{background:var(--redl);color:var(--red)}
+.badge-b{background:var(--bluel);color:var(--blue)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.frow-1{margin-bottom:8px}
+.frow-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.fg{display:flex;flex-direction:column;gap:3px}
+.flbl{font-size:9px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px}
+input.fi,select.fi,textarea.fi{border:1.5px solid var(--border);border-radius:7px;padding:9px 10px;font-size:14px;font-family:var(--sans);background:var(--card);color:var(--ink);outline:none;width:100%;-webkit-appearance:none;transition:.15s}
+input.fi:focus,select.fi:focus{border-color:var(--green);box-shadow:0 0 0 2px var(--greenl)}
+input.fi[readonly]{background:var(--card2);color:var(--ink3)}
+.fi-calc{background:var(--greenl)!important;color:var(--green)!important;font-weight:700;border-color:rgba(26,92,42,.25)!important;font-family:var(--mono)!important}
+.fi-warn{background:var(--amberl)!important;color:var(--amber)!important;border-color:rgba(196,122,0,.3)!important}
+.fi-err{background:var(--redl)!important;color:var(--red)!important;border-color:rgba(181,34,34,.2)!important}
+select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a09070' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:11px 16px;border-radius:var(--r);font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:var(--sans);transition:.15s;touch-action:manipulation;text-transform:uppercase;letter-spacing:.5px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--green);color:#fff;width:100%;margin-top:10px}
+.btn-amber{background:var(--amber);color:#fff;width:100%;margin-top:10px}
+.btn-secondary{background:var(--card2);color:var(--ink2);border:1.5px solid var(--border);flex:1;margin-top:8px}
+.btn-danger{background:var(--redl);color:var(--red);border:1.5px solid rgba(181,34,34,.2);flex:1;margin-top:8px}
+.btn-row{display:flex;gap:8px}
+.btn-sm{padding:5px 10px;font-size:10px;border-radius:6px}
+.item-row{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;position:relative}
+.item-num{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--green);color:#fff;border-radius:50%;font-size:9px;font-weight:700;margin-right:5px}
+.item-del{position:absolute;top:8px;right:8px;background:var(--redl);border:none;color:var(--red);width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.denom-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.denom-row:last-child{border-bottom:none}
+.denom-note{font-family:var(--mono);font-size:12px;font-weight:700;width:46px;color:var(--ink2)}
+.denom-input{border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:14px;font-family:var(--mono);background:var(--card);color:var(--ink);outline:none;width:68px;text-align:center;-webkit-appearance:none}
+.denom-input:focus{border-color:var(--green)}
+.denom-eq{color:var(--ink2);font-size:12px;flex:1;text-align:right;font-family:var(--mono);font-weight:700}
+.bill-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
+.bill-card-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.bill-name{font-size:14px;font-weight:700}
+.bill-inv{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.bill-meta{font-size:11px;color:var(--ink3)}
+.bill-amount{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--green)}
+#notif-wrap{position:fixed;top:56px;left:10px;right:10px;z-index:999;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.notif{background:var(--ink);color:#fff;padding:10px 14px;border-radius:var(--r);font-size:12px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);animation:slideDown .3s ease;pointer-events:auto}
+.notif.ok{background:var(--green)}.notif.err{background:var(--red)}.notif.info{background:var(--blue)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.empty{text-align:center;padding:36px 16px;color:var(--ink3)}
+.empty-ico{font-size:42px;margin-bottom:10px}
+.empty-text{font-size:14px;font-weight:600;color:var(--ink2)}
+.empty-sub{font-size:12px;margin-top:3px}
+.sec-hdr{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin:12px 0 6px}
+.divider{height:1px;background:var(--border);margin:10px 0}
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;cursor:pointer}
+.toggle-label{font-size:13px;font-weight:600;flex:1}
+.toggle-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:12px;transition:.3s;cursor:pointer}
+.toggle-track:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle-switch input:checked + .toggle-track{background:var(--amber)}
+.toggle-switch input:checked + .toggle-track:before{transform:translateX(20px)}
+.mode-banner{background:var(--amberl);border:1.5px solid var(--amber);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;font-size:12px;color:#7a4e00;font-weight:600;display:none}
+.mode-banner.show{display:block}
+/* STOCK */
+.stock-bar{height:4px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden}
+.stock-fill{height:100%;border-radius:2px;transition:width .5s}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div style="flex:1">
+    <div id="topbar-title">🌾 Vasundhara Billing</div>
+    <span id="topbar-sub">52 Rajaswa Colony, Ujjain · Seed Lic 1178</span>
+  </div>
+  <button class="topbar-btn" onclick="navTo('settings')">⚙</button>
+</div>
+
+<div id="notif-wrap"></div>
+<div id="scroll-wrap">
+
+<!-- ══ DASHBOARD ══ -->
+<div class="page" id="page-dashboard">
+  <div class="page-title">Dashboard</div>
+  <div class="page-sub" id="dash-sub">Sales overview</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px" id="dash-cards"></div>
+
+  <div class="card">
+    <div class="card-title">📅 Daily Sales (Last 14 Days)</div>
+    <div style="font-size:9px;color:var(--ink3);margin-bottom:6px">🟩 Amount (₹)  🟧 Quantity (Qtl)</div>
+    <div id="dash-daily-chart"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📦 Variety: Purchased vs Sold (Bags)</div>
+    <div id="dash-variety-chart"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--red)">⚠️ Credit-VS Pending
+      <span class="badge badge-r" id="dash-credit-sub">—</span>
+    </div>
+    <div id="dash-credit-list"></div>
+  </div>
+</div>
+
+<!-- ══ CREDIT-VS ══ -->
+<div class="page" id="page-credit">
+  <div class="page-title" style="color:var(--red)">Credit-VS Ledger</div>
+  <div class="page-sub" id="credit-sub">Pending payments</div>
+  <div id="credit-list"></div>
+</div>
+
+<!-- ══ NEW BILL ══ -->
+<div class="page active" id="page-new-bill">
+
+  <!-- Dealer Mode Toggle -->
+  <div id="mode-banner" class="mode-banner">🔀 Dealer/Wholesale Mode — plain bill, separate invoice series</div>
+  <div class="toggle-row" onclick="toggleDealerMode()">
+    <div>
+      <div class="toggle-label">Dealer / Wholesale Mode</div>
+      <div class="toggle-sub">Hides letterhead, T&C, logo — uses separate invoice series</div>
+    </div>
+    <label class="toggle-switch" onclick="event.stopPropagation()">
+      <input type="checkbox" id="dealer-toggle" onchange="toggleDealerMode()">
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+
+  <div class="page-sub" id="inv-sub">Invoice #— · —</div>
+
+  <!-- Customer -->
+  <div class="card">
+    <div class="card-title">👤 Customer</div>
+    <div class="frow-1"><div class="fg"><label class="flbl">नाम / Customer Name</label>
+      <input class="fi" id="b-name" placeholder="Customer Name" list="dl-names" oninput="updatePreview()" autocomplete="off"><datalist id="dl-names"></datalist></div></div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">ग्राम / Village</label>
+        <input class="fi" id="b-village" placeholder="Village" list="dl-villages" oninput="updatePreview()" autocomplete="off"><datalist id="dl-villages"></datalist></div>
+      <div class="fg"><label class="flbl">मोबाईल</label>
+        <input class="fi" id="b-mobile" type="tel" inputmode="numeric" placeholder="9XXXXXXXXX" oninput="updatePreview()"></div>
+    </div>
+  </div>
+
+  <!-- Items -->
+  <div class="card">
+    <div class="card-title">📦 Items (Lot × Bags)
+      <button class="btn btn-secondary btn-sm" onclick="addItem()" style="margin:0">+ Add</button>
+    </div>
+    <div id="items-container"></div>
+    <div id="items-totals" style="display:none;margin-top:6px;padding-top:8px;border-top:1px solid var(--border)">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+        <div style="text-align:center"><div class="flbl">Bags</div><div style="font-family:var(--mono);font-size:16px;font-weight:700" id="tot-bags">—</div></div>
+        <div style="text-align:center"><div class="flbl">Qty (Qtl)</div><div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--green)" id="tot-qty">—</div></div>
+        <div style="text-align:center"><div class="flbl">Subtotal</div><div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--green)" id="tot-sub">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment -->
+  <div class="card">
+    <div class="card-title">💰 Payment</div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">Total</label><input class="fi fi-calc" id="p-total" readonly></div>
+      <div class="fg"><label class="flbl">Discount (₹)</label><input class="fi" id="p-disc" type="number" inputmode="numeric" value="0" oninput="calcPayment()"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">Bill Amount</label><input class="fi fi-calc" id="p-billamount" readonly></div>
+      <div class="fg"><label class="flbl">Advance (₹)</label><input class="fi" id="p-advance" type="number" inputmode="numeric" value="0" oninput="calcPayment()"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">Account Pay (₹)</label><input class="fi" id="p-acct" type="number" inputmode="numeric" value="0" oninput="calcPayment()"></div>
+      <div class="fg"><label class="flbl">Cash Taken</label><input class="fi fi-calc" id="p-cash" readonly></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">Difference</label><input class="fi fi-calc" id="p-diff" readonly></div>
+      <div class="fg"><label class="flbl">Remark (auto)</label><input class="fi fi-calc" id="p-remark" readonly></div>
+    </div>
+  </div>
+
+  <!-- Denomination -->
+  <div class="card">
+    <div class="card-title">💵 Cash Denominations
+      <span class="badge badge-g" id="denom-badge">₹0</span>
+    </div>
+    <div id="denom-rows">
+      <div class="denom-row"><div class="denom-note">₹2000</div><span style="color:var(--ink3);font-size:12px">×</span><input class="denom-input" id="d2000" type="number" inputmode="numeric" value="" oninput="calcDenom()"><div class="denom-eq" id="d2000e">—</div></div>
+      <div class="denom-row"><div class="denom-note">₹500</div><span style="color:var(--ink3);font-size:12px">×</span><input class="denom-input" id="d500" type="number" inputmode="numeric" value="" oninput="calcDenom()"><div class="denom-eq" id="d500e">—</div></div>
+      <div class="denom-row"><div class="denom-note">₹200</div><span style="color:var(--ink3);font-size:12px">×</span><input class="denom-input" id="d200" type="number" inputmode="numeric" value="" oninput="calcDenom()"><div class="denom-eq" id="d200e">—</div></div>
+      <div class="denom-row"><div class="denom-note">₹100</div><span style="color:var(--ink3);font-size:12px">×</span><input class="denom-input" id="d100" type="number" inputmode="numeric" value="" oninput="calcDenom()"><div class="denom-eq" id="d100e">—</div></div>
+      <div class="denom-row"><div class="denom-note">₹50</div><span style="color:var(--ink3);font-size:12px">×</span><input class="denom-input" id="d50" type="number" inputmode="numeric" value="" oninput="calcDenom()"><div class="denom-eq" id="d50e">—</div></div>
+      <div class="denom-row"><div class="denom-note">₹20</div><span style="color:var(--ink3);font-size:12px">×</span><input class="denom-input" id="d20" type="number" inputmode="numeric" value="" oninput="calcDenom()"><div class="denom-eq" id="d20e">—</div></div>
+      <div class="denom-row"><div class="denom-note">₹10</div><span style="color:var(--ink3);font-size:12px">×</span><input class="denom-input" id="d10" type="number" inputmode="numeric" value="" oninput="calcDenom()"><div class="denom-eq" id="d10e">—</div></div>
+    </div>
+  </div>
+
+  <!-- LIVE PREVIEW -->
+  <div class="card" id="preview-card">
+    <div class="card-title">👁 Bill Preview (Live)
+      <button class="btn btn-secondary btn-sm" onclick="renderPreview()" style="margin:0">↺</button>
+    </div>
+    <div id="preview-body" style="font-size:12px;color:var(--ink2);line-height:1.7"></div>
+  </div>
+
+  <button class="btn btn-amber" onclick="saveBillAndPDF()">💾 Save Bill & Download PDF</button>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="clearBill()">✕ Clear Form</button>
+    <button class="btn btn-secondary" onclick="previewOnlyPDF()">👁 Preview PDF</button>
+  </div>
+</div>
+
+<!-- ══ BILLS LIST ══ -->
+<div class="page" id="page-bills">
+  <div class="page-title">All Bills</div>
+  <div class="page-sub" id="bills-count-sub">—</div>
+  <div class="search-bar" style="display:flex;gap:8px;margin-bottom:10px">
+    <input style="flex:1;border:1.5px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:14px;font-family:var(--sans);background:var(--card);outline:none" id="bill-search" placeholder="🔍 Name, invoice no..." oninput="filterBills()">
+  </div>
+  <div id="bills-list"></div>
+</div>
+
+<!-- ══ STOCK ══ -->
+<div class="page" id="page-stock">
+  <div class="page-title">Purchase Stock</div>
+  <div class="page-sub" id="stock-sub">Lot-wise stock. Sold bags auto-deducted from bills.</div>
+
+  <div class="card" id="stock-form-card">
+    <div class="card-title" id="stock-form-title">➕ Add New Lot
+      <button class="btn btn-secondary btn-sm" id="stock-cancel-btn" onclick="cancelStockEdit()" style="margin:0;display:none">✕ Cancel</button>
+    </div>
+    <input type="hidden" id="stock-edit-key">
+    <div class="frow-1"><div class="fg"><label class="flbl">Variety Name</label>
+      <input class="fi" id="st-variety" placeholder="e.g. GW-513 MAR-25-12-763-20 (CI)"></div></div>
+    <div class="frow-3">
+      <div class="fg"><label class="flbl">Total Bags</label>
+        <input class="fi" id="st-bags" type="number" inputmode="numeric" placeholder="300"></div>
+      <div class="fg"><label class="flbl">Bag Size (kg)</label>
+        <input class="fi" id="st-bsz" type="number" inputmode="decimal" placeholder="40"></div>
+      <div class="fg"><label class="flbl">Rate (₹/Qtl)</label>
+        <input class="fi" id="st-rate" type="number" inputmode="numeric" placeholder="5500"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveStockLot()">✓ Save Lot</button>
+  </div>
+
+  <div class="btn-row" style="margin-bottom:8px">
+    <button class="btn btn-secondary" onclick="syncStockFromSheets()" style="margin:0;flex:1">☁ Sync from Inward App</button>
+    <button class="btn btn-secondary" onclick="renderStock()" style="margin:0;padding:10px 14px">↺</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <input style="flex:1;border:1.5px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:14px;font-family:var(--sans);background:var(--card);outline:none" id="stock-q" placeholder="🔍 Filter variety..." oninput="renderStock()">
+  </div>
+  <div id="stock-list"></div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+<div class="page" id="page-settings">
+  <div class="page-title">Settings</div>
+  <div class="page-sub">Google Sheets · Purchase Data · Invoice Series</div>
+
+  <div class="card">
+    <div class="card-title">📡 Google Sheets Sync
+      <span class="badge badge-g" id="sync-status-badge">—</span>
+    </div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;line-height:1.6">
+      Each bill is pushed to the <strong>SALE tab</strong> the moment you save it — one row per item. Uses the same Google Sheet and Apps Script as the Inward app.<br>
+      <strong style="color:var(--amber)">Important:</strong> Use the updated Apps Script below that handles both SAVE_ALL (inward) and APPEND_ROWS (billing).
+    </div>
+    <div class="frow-1"><div class="fg"><label class="flbl">Apps Script Web App URL</label>
+      <input class="fi" id="sheet-url" placeholder="https://script.google.com/macros/s/.../exec"></div></div>
+    <button class="btn btn-primary" onclick="saveSheetUrl()">✓ Connect</button>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="testSheet()">Test</button>
+      <button class="btn btn-danger" onclick="clearSheet()">Disconnect</button>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:8px;width:100%" onclick="copyAppsScript()">📋 Copy Updated Apps Script Code</button>
+    <div style="font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.7">
+      <b>Setup:</b> Open your Google Sheet → Extensions → Apps Script → replace all code → Deploy as Web App (Anyone) → paste URL above.
+      If already deployed for Inward app, re-deploy with the updated code.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔢 Invoice Series</div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">VS Series (Next No.)</label>
+        <input class="fi" id="inv-vs" type="number" inputmode="numeric" placeholder="e.g. 8979"></div>
+      <div class="fg"><label class="flbl">Dealer Series (Next No.)</label>
+        <input class="fi" id="inv-dl" type="number" inputmode="numeric" placeholder="e.g. 19500"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveInvSettings()">✓ Save</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📦 Purchase Stock</div>
+    <div style="font-size:12px;color:var(--ink2);line-height:1.7">Manage purchase lots in the <strong>Stock</strong> tab — add, edit, and delete lots with Variety, Bags, Bag Size, and Rate.</div>
+  </div></div>
+
+  <div class="card">
+    <div class="card-title">📤 Sync & Export</div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:8px;line-height:1.5">
+      Push all saved bills to Google Sheet at once (useful when re-syncing after being offline).
+    </div>
+    <button class="btn btn-primary" onclick="pushAllBillsToSheet()" style="margin-bottom:0">☁ Push All Bills to Sheet</button>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="exportBills()">↓ Export JSON</button>
+      <button class="btn btn-danger" onclick="clearAllBills()">Clear All Bills</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /scroll-wrap -->
+
+<div id="bottom-nav">
+  <button class="nav-item" id="nav-dashboard" onclick="navTo('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dash
+  </button>
+  <button class="nav-item active" id="nav-new-bill" onclick="navTo('new-bill')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>New Bill
+  </button>
+  <button class="nav-item" id="nav-bills" onclick="navTo('bills')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>Bills
+  </button>
+  <button class="nav-item" id="nav-credit" onclick="navTo('credit')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Credit
+  </button>
+  <button class="nav-item" id="nav-stock" onclick="navTo('stock')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Stock
+  </button>
+  <button class="nav-item" id="nav-settings" onclick="navTo('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings
+  </button>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STORE
+// ═══════════════════════════════════════
+const K={bills:'vb_bills',purchase:'vb_purchase',invVS:'vb_inv_vs',invDL:'vb_inv_dl',sheet:'vb_sheet'};
+const DENOMS=[2000,500,200,100,50,20,10];
+
+const getBills=()=>{try{return JSON.parse(localStorage.getItem(K.bills)||'[]')}catch{return[]}};
+const saveBills=d=>localStorage.setItem(K.bills,JSON.stringify(d));
+const getPurchase=()=>{try{return JSON.parse(localStorage.getItem(K.purchase)||'[]')}catch{return[]}};
+const savePurchaseStore=d=>localStorage.setItem(K.purchase,JSON.stringify(d));
+const getSheet=()=>localStorage.getItem(K.sheet)||'';
+
+// ═══════════════════════════════════════
+// BUILT-IN PURCHASE DATA
+// ═══════════════════════════════════════
+const BUILTIN=[
+  {variety:'GW-513 MAR-25-12-763-20 (CI)',bags:300,bagSize:40,rate:5500},
+  {variety:'GW-513 40KG',bags:1386,bagSize:40,rate:5300},
+  {variety:'GW-322 MAR-25-12-763-49 (CI)',bags:438,bagSize:40,rate:5500},
+  {variety:'GW-322 40KG',bags:76,bagSize:40,rate:5300},
+  {variety:'HD-4728(पूसा मालवी) MAR-25-12-763-38 (CI)',bags:442,bagSize:40,rate:5500},
+  {variety:'LOK-1 MAR-25-12-763-13 (FI)',bags:430,bagSize:40,rate:5500},
+  {variety:'LOK-1 MAR-25-12-763-19 (FI)',bags:446,bagSize:40,rate:5500},
+  {variety:'LOK-1 40KG',bags:300,bagSize:40,rate:5300},
+  {variety:'HI-1650(पूसा ओजस्वी) MAR-25-12-763-40 (FII)',bags:342,bagSize:40,rate:5500},
+  {variety:'HI-1650(पूसा ओजस्वी) MAR-25-12-763-40(2) (FII)',bags:338,bagSize:40,rate:5500},
+  {variety:'HI-1650(पूसा ओजस्वी) 40KG',bags:149,bagSize:40,rate:5300},
+  {variety:'HI-1650(पूसा ओजस्वी) APR-25-12-763-46 (FII)',bags:200,bagSize:40,rate:5500},
+  {variety:'C-306 MAR-25-12-763-1 (FII)',bags:340,bagSize:40,rate:6500},
+  {variety:'C-306 40KG',bags:32,bagSize:40,rate:6000},
+  {variety:'HI-8713(पूसा मंगल) MAR-25-12-763-35 (FII)',bags:433,bagSize:40,rate:5500},
+  {variety:'HI-8713(पूसा मंगल) 40KG',bags:200,bagSize:40,rate:5300},
+  {variety:'8826 40KG',bags:354,bagSize:40,rate:5000},
+  {variety:'HI-1655(पूसा हर्षा) 40KG',bags:332,bagSize:40,rate:5300},
+  {variety:'HI-1655(पूसा हर्षा) MAR-25-12-763-21 (FI)',bags:110,bagSize:40,rate:5500},
+  {variety:'HI-1634(पूसा अहिल्या) 40KG',bags:1222,bagSize:40,rate:5300},
+  {variety:'HD-3385 40KG',bags:5431,bagSize:40,rate:5300},
+  {variety:'33-88 40KG',bags:230,bagSize:40,rate:5000},
+  {variety:'3390 40KG',bags:564,bagSize:40,rate:5000},
+  {variety:'HD-3410 40KG',bags:272,bagSize:40,rate:5300},
+  {variety:'HI-8830(पूसा किर्ति) 40KG',bags:800,bagSize:40,rate:5300},
+  {variety:'HI-8830(पूसा किर्ति) APR-25-12-763-28 (FII)',bags:300,bagSize:40,rate:5500},
+  {variety:'HD-3385 BR 40KG',bags:300,bagSize:40,rate:7000},
+  {variety:'PRADHAN(प्रधान) 40KG',bags:400,bagSize:40,rate:5300},
+  {variety:'MANAV(मानव) 40KG',bags:300,bagSize:40,rate:5500},
+  {variety:'SAMRUDDHI(समृद्धि) 40KG',bags:300,bagSize:40,rate:5300},
+  {variety:'HI-8759(पूसा तेजस) 40KG',bags:400,bagSize:40,rate:5300},
+  {variety:'HI-8759(पूसा तेजस) MAR-25-12-763-52 (FII)',bags:300,bagSize:40,rate:5500},
+  {variety:'HI-1634(पूसा अहिल्या) MAR-25-12-763-48 (FII)',bags:200,bagSize:40,rate:5500},
+  {variety:'HI-1544 (पूर्णा) 40KG',bags:300,bagSize:40,rate:5500},
+  {variety:'HI-8759(पूसा तेजस) 50KG',bags:300,bagSize:50,rate:3500},
+  {variety:'HI-1650(पूसा ओजस्वी) 50KG',bags:500,bagSize:50,rate:3250},
+  {variety:'HI-8830(पूसा किर्ति) 50KG',bags:400,bagSize:50,rate:3850},
+  {variety:'DAFTARI 21 10KG',bags:200,bagSize:10,rate:5300},
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let billItems=[];
+let dealerMode=false;
+let editingBillId=null;
+
+function getAllLots(){
+  // Only return stored purchase data (not BUILTIN fallback)
+  // Use BUILTIN only if stored is completely empty (first run)
+  const stored=getPurchase();
+  return stored.length ? stored : BUILTIN.slice();
+}
+function getSoldBags(variety){
+  return getBills().filter(b=>b.id!==editingBillId).reduce((s,b)=>s+b.items.filter(it=>it.variety===variety).reduce((ss,it)=>ss+(it.bags||0),0),0);
+}
+function getStockBags(variety){
+  const lot=getAllLots().find(p=>p.variety===variety);
+  if(!lot) return 999;
+  return Math.max(0,(lot.bags||0)-getSoldBags(variety));
+}
+
+// ═══════════════════════════════════════
+// INVOICE NUMBERS
+// ═══════════════════════════════════════
+function getInvNo(dealer){
+  const key=dealer?K.invDL:K.invVS;
+  const saved=parseInt(localStorage.getItem(key)||'0');
+  if(saved>0) return saved;
+  if(dealer){
+    const bills=getBills().filter(b=>b.dealer);
+    return bills.length?Math.max(...bills.map(b=>b.invoiceNo||0))+1:19500;
+  }
+  const bills=getBills().filter(b=>!b.dealer);
+  return bills.length?Math.max(...bills.map(b=>b.invoiceNo||0))+1:8979;
+}
+function bumpInvNo(dealer){
+  const key=dealer?K.invDL:K.invVS;
+  const cur=getInvNo(dealer);
+  localStorage.setItem(key,cur+1);
+}
+
+function updateInvDisplay(){
+  const no=getInvNo(dealerMode);
+  const d=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  const tag=dealerMode?'<span style="color:var(--amber);font-weight:700"> [DEALER]</span>':'';
+  const sub=document.getElementById('inv-sub');
+  if(sub) sub.innerHTML=`Invoice #${no}${tag} · ${d}`;
+}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function navTo(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  const pg=document.getElementById('page-'+p);
+  if(pg){pg.classList.add('active');document.getElementById('scroll-wrap').scrollTop=0;}
+  const nb=document.getElementById('nav-'+p);
+  if(nb) nb.classList.add('active');
+  const handlers={dashboard:renderDashboard,bills:renderBills,stock:renderStock,credit:renderCreditPage,settings:initSettings};
+  if(handlers[p]) handlers[p]();
+}
+
+// ═══════════════════════════════════════
+// DEALER MODE TOGGLE
+// ═══════════════════════════════════════
+function toggleDealerMode(){
+  const cb=document.getElementById('dealer-toggle');
+  dealerMode=cb.checked;
+  const banner=document.getElementById('mode-banner');
+  banner.classList.toggle('show',dealerMode);
+  updateInvDisplay();
+}
+
+// ═══════════════════════════════════════
+// ITEMS
+// ═══════════════════════════════════════
+function addItem(data){
+  const idx=billItems.length;
+  billItems.push(data||{variety:'',bagSize:40,bags:'',qty:0,rate:0,amount:0});
+  const container=document.getElementById('items-container');
+  const lots=getAllLots();
+  const opts=lots.map(p=>{
+    const stock=getStockBags(p.variety);
+    return `<option value="${p.variety}" data-bsz="${p.bagSize}" data-rate="${p.rate}" ${stock<=0?'disabled':''}>
+      ${p.variety} [${stock} bags]</option>`;
+  }).join('');
+  const div=document.createElement('div');
+  div.id=`ir${idx}`;div.className='item-row';
+  div.innerHTML=`
+    <div style="display:flex;align-items:center;margin-bottom:6px">
+      <span class="item-num">${idx+1}</span>
+      <span style="font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Item ${idx+1}</span>
+    </div>
+    <button class="item-del" onclick="removeItem(${idx})">×</button>
+    <div class="frow-1"><div class="fg"><label class="flbl">Lot / Variety</label>
+      <select class="fi" id="it${idx}lot" onchange="onLotChange(${idx})">
+        <option value="">— Select Lot —</option>${opts}
+      </select></div></div>
+    <div class="frow-3">
+      <div class="fg"><label class="flbl">Bags</label>
+        <input class="fi" id="it${idx}bags" type="number" inputmode="numeric" placeholder="0" oninput="calcItem(${idx})"></div>
+      <div class="fg"><label class="flbl">Packing (kg)</label>
+        <input class="fi fi-calc" id="it${idx}bsz" readonly></div>
+      <div class="fg"><label class="flbl">Qty (Qtl)</label>
+        <input class="fi fi-calc" id="it${idx}qty" readonly></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">Rate (₹/Qtl)</label>
+        <input class="fi" id="it${idx}rate" type="number" inputmode="numeric" oninput="calcItem(${idx})"></div>
+      <div class="fg"><label class="flbl">Amount (₹)</label>
+        <input class="fi fi-calc" id="it${idx}amt" readonly></div>
+    </div>
+    <div id="it${idx}warn" style="display:none" class="badge badge-a" style="margin-top:4px">⚠ Stock low</div>`;
+  container.appendChild(div);
+  if(data&&data.variety){
+    const sel=document.getElementById(`it${idx}lot`);
+    if(sel){sel.value=data.variety;onLotChange(idx,true);}
+    const bagsEl=document.getElementById(`it${idx}bags`);
+    if(bagsEl){bagsEl.value=data.bags;}
+    const rateEl=document.getElementById(`it${idx}rate`);
+    if(rateEl){rateEl.value=data.rate;}
+    calcItem(idx);
+  }
+}
+
+function removeItem(idx){
+  billItems.splice(idx,1);
+  const container=document.getElementById('items-container');
+  container.innerHTML='';
+  const prev=[...billItems];
+  billItems=[];
+  prev.forEach(it=>addItem(it));
+  updateTotals();updatePreview();
+}
+
+function onLotChange(idx,restore){
+  const sel=document.getElementById(`it${idx}lot`);
+  if(!sel) return;
+  const variety=sel.value;
+  const lot=getAllLots().find(p=>p.variety===variety);
+  if(!lot) return;
+  billItems[idx].variety=variety;
+  billItems[idx].bagSize=lot.bagSize;
+  billItems[idx].rate=lot.rate;
+  const bszEl=document.getElementById(`it${idx}bsz`);
+  if(bszEl) bszEl.value=lot.bagSize;
+  if(!restore){
+    const rEl=document.getElementById(`it${idx}rate`);
+    if(rEl) rEl.value=lot.rate;
+  }
+  calcItem(idx);
+}
+
+function calcItem(idx){
+  const variety=document.getElementById(`it${idx}lot`)?.value||'';
+  const bags=+document.getElementById(`it${idx}bags`)?.value||0;
+  const bsz=+document.getElementById(`it${idx}bsz`)?.value||40;
+  const rate=+document.getElementById(`it${idx}rate`)?.value||0;
+  const qty=bags*bsz/100;
+  const amt=Math.round(qty*rate);
+  const qEl=document.getElementById(`it${idx}qty`);
+  if(qEl) qEl.value=qty>0?qty.toFixed(2):'';
+  const aEl=document.getElementById(`it${idx}amt`);
+  if(aEl) aEl.value=amt>0?amt.toLocaleString('en-IN'):'';
+  const stock=getStockBags(variety);
+  const warn=document.getElementById(`it${idx}warn`);
+  if(warn) warn.style.display=bags>0&&bags>stock?'inline-block':'none';
+  billItems[idx]={variety,bagSize:bsz,bags,qty:parseFloat(qty.toFixed(3)),rate,amount:amt};
+  updateTotals();calcPayment();
+}
+
+function updateTotals(){
+  const active=billItems.filter(it=>it.bags>0&&it.variety);
+  const totBags=active.reduce((s,it)=>s+(it.bags||0),0);
+  const totQty=active.reduce((s,it)=>s+(it.qty||0),0);
+  const totAmt=active.reduce((s,it)=>s+(it.amount||0),0);
+  const td=document.getElementById('items-totals');
+  if(td) td.style.display=active.length?'block':'none';
+  const tb=document.getElementById('tot-bags');if(tb) tb.textContent=totBags||'—';
+  const tq=document.getElementById('tot-qty');if(tq) tq.textContent=totQty>0?totQty.toFixed(2):'—';
+  const ts=document.getElementById('tot-sub');if(ts) ts.textContent=totAmt>0?'₹'+Math.round(totAmt).toLocaleString('en-IN'):'—';
+}
+
+// ═══════════════════════════════════════
+// PAYMENT
+// ═══════════════════════════════════════
+function calcPayment(){
+  const active=billItems.filter(it=>it.bags>0&&it.variety);
+  const total=active.reduce((s,it)=>s+(it.amount||0),0);
+  const disc=+document.getElementById('p-disc')?.value||0;
+  const billAmt=total-disc;
+  const advance=+document.getElementById('p-advance')?.value||0;
+  const acct=+document.getElementById('p-acct')?.value||0;
+  const cash=getDenomTotal();
+  const diff=billAmt-advance-acct-cash;
+  const remark=diff===0?(acct>0?'BANK-VS':'VS'):'Credit-vs';
+  const s=id=>document.getElementById(id);
+  if(s('p-total')) s('p-total').value=total>0?'₹'+Math.round(total).toLocaleString('en-IN'):'';
+  if(s('p-billamount')) s('p-billamount').value=billAmt>0?'₹'+Math.round(billAmt).toLocaleString('en-IN'):'';
+  if(s('p-cash')) s('p-cash').value='₹'+cash.toLocaleString('en-IN');
+  if(s('p-diff')){
+    s('p-diff').value='₹'+Math.round(diff).toLocaleString('en-IN');
+    s('p-diff').className='fi '+(diff===0?'fi-calc':diff<0?'fi-err':'fi-warn');
+  }
+  if(s('p-remark')) s('p-remark').value=remark;
+  renderPreview();
+}
+
+// ═══════════════════════════════════════
+// DENOMINATION
+// ═══════════════════════════════════════
+function calcDenom(){
+  let total=0;
+  DENOMS.forEach(d=>{
+    const cnt=+document.getElementById(`d${d}`)?.value||0;
+    const amt=d*cnt;total+=amt;
+    const eq=document.getElementById(`d${d}e`);
+    if(eq) eq.textContent=amt>0?'= ₹'+amt.toLocaleString('en-IN'):'—';
+  });
+  const badge=document.getElementById('denom-badge');
+  if(badge) badge.textContent='₹'+total.toLocaleString('en-IN');
+  calcPayment();
+}
+function getDenomTotal(){return DENOMS.reduce((s,d)=>s+d*(+document.getElementById(`d${d}`)?.value||0),0);}
+function getDenomMap(){const m={};DENOMS.forEach(d=>{m[d]=+document.getElementById(`d${d}`)?.value||0;});return m;}
+
+function updatePreview(){ renderPreview(); }
+
+function renderPreview(){
+  const pb = document.getElementById('preview-body'); if(!pb) return;
+  const active = billItems.filter(it=>it.bags>0&&it.variety);
+  const name = document.getElementById('b-name')?.value.trim()||'—';
+  const village = document.getElementById('b-village')?.value.trim()||'—';
+  const mobile = document.getElementById('b-mobile')?.value.trim()||'—';
+  const subtotal = active.reduce((s,it)=>s+(it.amount||0),0);
+  const disc = +document.getElementById('p-disc')?.value||0;
+  const billAmt = subtotal-disc;
+  const advance = +document.getElementById('p-advance')?.value||0;
+  const acct = +document.getElementById('p-acct')?.value||0;
+  const cash = getDenomTotal();
+  const diff = billAmt-advance-acct-cash;
+  const remark = diff===0?(acct>0?'BANK-VS':'VS'):'Credit-vs';
+  const invNo = editingBillId?getBills().find(b=>b.id===editingBillId)?.invoiceNo:getInvNo(dealerMode);
+  const today = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
+  const totBags = active.reduce((s,it)=>s+(it.bags||0),0);
+  const totQty = active.reduce((s,it)=>s+(it.qty||0),0);
+
+  const borderStyle = 'border:1px solid #ccc;border-collapse:collapse;width:100%;font-size:11px';
+  const tdStyle = 'border:1px solid #ccc;padding:3px 5px';
+  const thStyle = 'border:1px solid #ccc;padding:3px 5px;background:#1a5c2a;color:#fff;font-weight:700;font-size:10px';
+
+  let html2 = `
+  <div style="border:2px solid #1a5c2a;border-radius:6px;overflow:hidden;background:#fff;font-family:monospace">
+    ${!dealerMode ? `
+    <div style="background:#f0f8f1;border-bottom:1px solid #ccc;padding:6px 10px;display:flex;align-items:center;gap:8px">
+      <div style="font-weight:700;font-size:12px;color:#1a5c2a">VASUNDHARA SEEDS</div>
+      <div style="font-size:9px;color:#555;flex:1">52 RAJASWA COLONY, TANKI PATH FREEGANJ, UJJAIN MP · PH 0734-2530547 · SEED LIC 1178</div>
+    </div>` : '<div style="height:4px;background:linear-gradient(to right,#c47a00,#f0e0a0)"></div>'}
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #ccc">
+      <div style="padding:6px 8px;border-right:1px solid #ccc;font-size:11px">
+        <div><b>Name:</b> <span style="color:#00008b">${name}</span></div>
+        <div><b>Village:</b> ${village}</div>
+        <div><b>Mobile No.:</b> ${mobile}</div>
+      </div>
+      <div style="padding:6px 8px;font-size:11px">
+        <div style="display:flex;justify-content:space-between"><span style="color:#666">${!dealerMode?'Invoice no':''}</span><b>${invNo}</b></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#666">${!dealerMode?'Date':''}</span><span>${today}</span></div>
+        ${!dealerMode?`<div style="font-size:9px;color:#666;margin-top:3px">GST EXEMPTED WHEAT SEED</div>`:''}
+      </div>
+    </div>
+    <table style="${borderStyle}">
+      <thead><tr>
+        <th style="${thStyle};width:24px">Sno</th>
+        <th style="${thStyle};text-align:left">Particular</th>
+        <th style="${thStyle};width:36px">Bags</th>
+        <th style="${thStyle};width:40px">Packing</th>
+        <th style="${thStyle};width:44px">Quantity</th>
+        <th style="${thStyle};width:40px">Rate</th>
+        <th style="${thStyle};width:52px">Amount</th>
+      </tr></thead>
+      <tbody>
+        ${active.length ? active.map((it,i)=>`<tr>
+          <td style="${tdStyle};text-align:center">${i+1}</td>
+          <td style="${tdStyle};font-size:10px">${it.variety}</td>
+          <td style="${tdStyle};text-align:center">${it.bags}</td>
+          <td style="${tdStyle};text-align:center">${it.bagSize}</td>
+          <td style="${tdStyle};text-align:center">${it.qty.toFixed(2)}</td>
+          <td style="${tdStyle};text-align:center">${it.rate}</td>
+          <td style="${tdStyle};text-align:right;font-weight:700">${Math.round(it.amount).toLocaleString('en-IN')}</td>
+        </tr>`).join('') : `<tr><td colspan="7" style="${tdStyle};text-align:center;color:#aaa;padding:8px">— No items —</td></tr>`}
+        ${[2,3,4,5].slice(active.length).map(()=>`<tr>${Array(7).fill(`<td style="${tdStyle}"> </td>`).join('')}</tr>`).join('')}
+        <tr style="background:#e8f5eb;font-weight:700">
+          <td style="${tdStyle};text-align:center">.</td>
+          <td style="${tdStyle}"></td>
+          <td style="${tdStyle};text-align:center">${totBags||''}</td>
+          <td style="${tdStyle}"></td>
+          <td style="${tdStyle};text-align:center">${totQty>0?totQty.toFixed(2):''}</td>
+          <td style="${tdStyle}"></td>
+          <td style="${tdStyle};text-align:right;color:#1a5c2a">${subtotal>0?Math.round(subtotal).toLocaleString('en-IN'):''}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:55% 45%;border-top:1px solid #ccc">
+      <div style="padding:6px 8px;background:${!dealerMode?'#fff':'#fffde8'};border-right:1px solid #ccc">
+        ${!dealerMode ? `<div style="font-size:8px;color:#333;line-height:1.5">नियम शर्तें : बीज का वजन देखकर लेवें, जवाबदारी नहीं। प्रतिकूल परिस्थितियों में जवाबदारी नहीं। ब्याज 2%/माह। न्यायक्षेत्र उज्जैन। बेचा माल वापस नहीं। <i>Subject to UJJAIN Jurisdiction. E. & O. E.</i></div>` : ''}
+        <div style="margin-top:6px"><span style="font-size:10px;color:#c47a00;font-weight:700">Remark-</span></div>
+        <div style="font-size:13px;font-weight:700;color:#1a5c2a">${remark}</div>
+      </div>
+      <div style="font-size:11px">
+        ${[
+          ['TOTAL','₹'+Math.round(subtotal).toLocaleString('en-IN'),true],
+          ['Discount','₹'+disc.toLocaleString('en-IN'),false],
+          ['Bill amount','₹'+Math.round(billAmt).toLocaleString('en-IN'),true],
+          ['Advance','₹'+advance.toLocaleString('en-IN'),false],
+          ['Account Pay','₹'+acct.toLocaleString('en-IN'),false],
+          ['Cash Taken','₹'+cash.toLocaleString('en-IN'),false],
+          ['Difference','₹'+Math.round(diff).toLocaleString('en-IN'),true],
+        ].map(([l,v,b])=>`
+          <div style="display:flex;justify-content:space-between;padding:2px 6px;border-bottom:1px solid #eee;background:${b?'#e8f5eb':'#fff'}">
+            <span style="font-weight:${b?'700':'400'};color:${l==='Difference'&&diff!==0?'#b52222':b?'#1a5c2a':'#333'}">${l}</span>
+            <span style="font-weight:${b?'700':'400'};font-family:monospace;color:${l==='Difference'&&diff!==0?'#b52222':b?'#1a5c2a':'#000'}">${v}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    ${!dealerMode?`<div style="display:flex;justify-content:space-between;padding:5px 8px;border-top:1px solid #1a5c2a;background:#f9fdf9;font-size:9px;color:#555"><span>कृषक के हस्ताक्षर ___________</span><span>___________ वास्ते वसुंधरा सीड्स</span></div>`:`<div style="display:flex;justify-content:space-between;padding:5px 8px;border-top:1px solid #ccc;font-size:9px;color:#999"><span>Buyer Signature ___________</span><span>___________ Authorised Signatory</span></div>`}
+  </div>`;
+  pb.innerHTML = html2;
+}
+
+// ═══════════════════════════════════════
+// PDF GENERATION — exact A5 bill layout
+// ═══════════════════════════════════════
+const TERMS_HINDI=`नियम शर्तें : 1. बीज का वजन, टेग, पेकिंग, तारीख, विवरण आदि देखकर लेवें, बाद में हमारी किसी प्रकार की कोई जवाबदानी नहीं होगी। पेकिंग पर दिए गए निर्देशों का पालन करें। 2. प्रतिकूल परिस्थितियों में बीज की उत्पादन क्षमता या अंकुरण क्षमता की जवाबदारी हमारी नहीं है। 3. अंकित सामग्री के लिए हमारी कोई ग्यारंटी नहीं है। 4. ब्याज बिल तारीख से 2 प्रतिशत प्रतिमाह की दर से लगेगा। 5. किसी प्रकार की शिकायत आने पर हमारी जवाबदारी नहीं है। 6. सभी प्रसंगों का न्यायक्षेत्र उज्जैन रहेगा। 7. बेचा हुआ माल वापस नहीं होगा। 8. माल सिर्फ कृषि उपयोग हेतु है। 9. माल के परिवहन में हुई नुकसानी हमारी नहीं रहेगी। 10. भूल-चूक लेनी-देनी।
+सावधानियाँ : बीज बोने से पहले मौसम की जानकारी जरूर से लेवें। आदर्श परिस्थिति में 25 से 35 डिग्री तापमान पर ही बीज का अंकुरण पूरा होता है।  Subject to UJJAIN Jurisdiction.  E. & O. E.
+विशेष : हमारे द्वारा समस्त बीजों का विक्रय अंकुरण एवं अन्य जाँचों के पास होने के पश्चात् ही किया जाता है। अत: समस्त क्रय किये गये बीजों का अंकुरण एवं अन्य जाँचें क्रेता/कृषक अपने घर ले जाकर अवश्य कर लेवें। किसी भी प्रकार की कमी होने की स्थिति में बीज प्राप्ति के 9 दिवस के अन्दर कृषक/क्रेता को बीज वापस लौटाने के संबंध में पूरी छूट/गारंटी वसुन्धरा सीड्स की रहेगी। किंतु बोनी की परिस्थितियाँ, मौसम, खेत की स्थिति हमारे नियंत्रण के बाहर होने से बोनी पश्चात् आने वाली अंकुरण की किसी भी शिकायत पर विचार नहीं किया जा सकेगा। यह स्पष्ट विदित रहे।`;
+async function buildPDF(bd){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a5'});
+  const W=doc.internal.pageSize.getWidth(); // 148mm
+  const H=doc.internal.pageSize.getHeight(); // 210mm
+  const dealer=bd.dealer;
+  const m=5; // margin
+  let y=m;
+
+  // ── Helper functions ──────────────────────────────────
+  const sf=(sz,st)=>{doc.setFontSize(sz);doc.setFont('helvetica',st||'normal');};
+  const sc=(r,g,b)=>doc.setTextColor(r,g,b);
+  const sdc=(r,g,b)=>doc.setDrawColor(r,g,b);
+  const sfc=(r,g,b)=>doc.setFillColor(r,g,b);
+  const tx=(t,x,yy,a)=>doc.text(String(t||''),x,yy,a||{});
+  const ln=(x1,y1,x2,y2)=>doc.line(x1,y1,x2,y2);
+  const rc=(x,yy,w,h,s)=>doc.rect(x,yy,w,h,s||'S');
+
+  if(!dealer){
+    // ── HEADER ─────────────────────────────────────────
+    // Logo area (left ~35mm) + company info (right)
+    sfc(245,248,245);rc(m,y,W-2*m,22,'F');
+    sdc(180,200,180);rc(m,y,W-2*m,22);
+
+    // Logo box (left)
+    sfc(255,255,255);rc(m+1,y+1,30,20,'F');
+    sdc(200,210,200);rc(m+1,y+1,30,20);
+    // Stylised VS logo text
+    sf(9,'bold');sc(26,90,42);
+    tx('VASUNDHARA',m+3,y+8);
+    sf(7,'bold');sc(80,80,80);
+    tx('— SEEDS —',m+5,y+13);
+    // Small wheat icon
+    sf(12,'normal');
+    tx('🌾',m+11,y+19);
+
+    // Company info (right of logo)
+    const cx=m+34;
+    sf(9,'bold');sc(26,90,42);
+    tx('VASUNDHARA SEEDS',cx,y+6);
+    sf(6.5,'normal');sc(40,40,40);
+    tx('52, RAJASWA COLONY,TANKI PATH FREEGANJ, UJJAIN MP',cx,y+11);
+    tx('PH 0734-2530547, 9425332517',cx,y+15.5);
+    sf(6.5,'bold');sc(0,0,0);
+    tx('SEED LIC NO- 1178',cx,y+20);
+    y+=24;
+  } else {
+    // Dealer mode — NO header banner at all (clean plain bill)
+    // Just a thin top border line
+    sdc(180,180,160);ln(m,y+2,W-m,y+2);
+    y+=5;
+  }
+
+  // ── CUSTOMER + INVOICE BOX ────────────────────────────
+  sdc(160,160,160);rc(m,y,W-2*m,18);
+  ln(W/2,y,W/2,y+18);
+  // Customer left — always use clear English labels
+  sf(6.5,'bold');sc(80,80,80);
+  tx('Name',m+2,y+5.5);tx('Village',m+2,y+11);tx('Mobile No.',m+2,y+16.5);
+  sf(7,'normal');sc(0,0,0);
+  tx(':',m+20,y+5.5);tx(':',m+20,y+11);tx(':',m+20,y+16.5);
+  sf(8,'bold');sc(0,0,60);
+  tx(bd.name||'',m+23,y+5.5);
+  sf(8,'bold');sc(0,0,0);
+  tx(bd.village||'',m+23,y+11);
+  sf(8,'normal');
+  tx(bd.mobile||'',m+23,y+16.5);
+  // Invoice right — in dealer mode hide "Invoice no" / "Date" labels, show values only
+  const ri=W/2+2;
+  if(!dealer){
+    sf(7,'normal');sc(80,80,80);
+    tx('Invoice no',ri,y+5.5);tx('Date',ri,y+11);
+    sf(6.5,'normal');sc(80,80,80);tx('GST EXEMPTED WHEAT SEED',ri,y+16.5);
+  }
+  sf(9,'bold');sc(0,0,0);
+  tx(String(bd.invNo),W-m-1,y+5.5,{align:'right'});
+  sf(8,'normal');
+  tx(bd.dateStr,W-m-1,y+11,{align:'right'});
+  y+=20;
+
+  // ── ITEMS TABLE ───────────────────────────────────────
+  // Columns: Sno(8) | Particular(53) | Bags(14) | Packing(16) | Quantity(18) | Rate(17) | Amount(18)
+  const CW=[8,53,14,16,18,17,18]; // sum=144=W-2*m (148-10=138 — adjust)
+  const totalCW=CW.reduce((s,c)=>s+c,0);
+  const scale=(W-2*m)/totalCW;
+  const CWS=CW.map(c=>c*scale);
+  const CX=[m];CW.forEach((c,i)=>{if(i<CW.length-1)CX.push(CX[i]+CWS[i]);});
+  const HDRS=['Sno','Particular','Bags','Packing','Quantity','Rate','Amount'];
+
+  // Header row
+  sfc(30,80,40);rc(m,y,W-2*m,6,'F');
+  sf(6.5,'bold');sc(255,255,255);
+  HDRS.forEach((h,i)=>{
+    const cx=i===1?CX[i]+1:CX[i]+CWS[i]/2;
+    tx(h,cx,y+4.5,i===1?{}:{align:'center'});
+  });
+  y+=6;
+
+  // Item rows — always 5 rows minimum (as per the bill in the photo)
+  const ROWS_MIN=5;
+  const rowH=9;
+  for(let ri=0;ri<Math.max(bd.active.length,ROWS_MIN);ri++){
+    const it=bd.active[ri]||null;
+    sdc(200,210,200);
+    if(ri%2===0){sfc(255,255,255);}else{sfc(250,252,250);}
+    rc(m,y,W-2*m,rowH,'F');
+    sdc(200,200,200);ln(m,y+rowH,m+W-2*m,y+rowH);
+    // Vertical dividers
+    CX.slice(1).forEach(cx=>ln(cx,y,cx,y+rowH));
+
+    if(it){
+      sf(7,'normal');sc(0,0,0);
+      tx(ri+1,CX[0]+CWS[0]/2,y+6,{align:'center'});
+      // Particular — may wrap
+      const ptext=it.variety||'';
+      sf(6.5,'normal');
+      if(ptext.length>28){
+        // Two lines
+        const mid=ptext.lastIndexOf(' ',28);
+        const l1=ptext.slice(0,mid<15?28:mid);
+        const l2=ptext.slice(l1.length+1);
+        tx(l1,CX[1]+1,y+4.5);
+        tx(l2,CX[1]+1,y+8);
+      } else {
+        tx(ptext,CX[1]+1,y+6);
+      }
+      sf(7.5,'normal');
+      tx(it.bags,CX[2]+CWS[2]/2,y+6,{align:'center'});
+      tx(it.bagSize,CX[3]+CWS[3]/2,y+6,{align:'center'});
+      tx(it.qty.toFixed(2),CX[4]+CWS[4]/2,y+6,{align:'center'});
+      tx(it.rate,CX[5]+CWS[5]/2,y+6,{align:'center'});
+      sf(7.5,'bold');
+      tx(Math.round(it.amount).toLocaleString('en-IN'),CX[6]+CWS[6]-1,y+6,{align:'right'});
+    }
+    y+=rowH;
+  }
+
+  // Totals row
+  sfc(230,245,232);rc(m,y,W-2*m,7,'F');
+  sdc(120,160,120);rc(m,y,W-2*m,7);
+  CX.slice(1).forEach(cx=>ln(cx,y,cx,y+7));
+  sf(7.5,'bold');sc(0,0,0);
+  tx('.',CX[0]+CWS[0]/2,y+5,{align:'center'});
+  const totBags=bd.active.reduce((s,it)=>s+(it.bags||0),0);
+  const totQty=bd.active.reduce((s,it)=>s+(it.qty||0),0);
+  const totAmt=bd.active.reduce((s,it)=>s+(it.amount||0),0);
+  tx(totBags||'',CX[2]+CWS[2]/2,y+5,{align:'center'});
+  tx(totQty>0?totQty.toFixed(2):'',CX[4]+CWS[4]/2,y+5,{align:'center'});
+  sf(8,'bold');sc(10,60,20);
+  tx(Math.round(totAmt).toLocaleString('en-IN'),CX[6]+CWS[6]-1,y+5,{align:'right'});
+  y+=9;
+
+  // ── TERMS + PAYMENT BLOCK ─────────────────────────────
+  // Left: Terms (Hindi) | Right: Remark + Payment summary
+  const termsW=(W-2*m)*0.55;
+  const payW=(W-2*m)*0.45;
+  const payX=m+termsW;
+  const blockStart=y;
+
+  if(!dealer){
+    // Terms block (left side)
+    sfc(255,255,255);rc(m,y,termsW,52,'F');
+    sdc(200,200,200);rc(m,y,termsW,52);
+    sf(5,'normal');sc(30,30,30);
+    const termsLines=doc.splitTextToSize(TERMS_HINDI,termsW-3);
+    const maxLines=Math.min(termsLines.length,22);
+    termsLines.slice(0,maxLines).forEach((line,li)=>{
+      tx(line,m+1.5,y+4+li*2.2);
+    });
+    // Remark on left below terms
+    sf(7,'bold');sc(0,0,0);
+    tx('Remark-',m+2,y+44);
+    sf(8,'bold');sc(26,90,42);
+    tx(bd.remark||'VS',m+2,y+50);
+  } else {
+    // Dealer mode — just remark, no company name
+    sfc(255,253,235);rc(m,y,termsW,52,'F');
+    sdc(200,190,160);rc(m,y,termsW,52);
+    sf(7,'bold');sc(100,80,0);
+    tx('Remark-',m+2,y+10);
+    sf(9,'bold');sc(26,90,42);
+    tx(bd.remark||'VS',m+2,y+20);
+  }
+
+  // Payment summary (right side) — exact like the bill photo
+  const payRows=[
+    {l:'TOTAL',v:'₹'+Math.round(bd.subtotal).toLocaleString('en-IN'),bold:true,bigger:true},
+    {l:'Discount',v:'₹'+Math.round(bd.discount||0).toLocaleString('en-IN'),bold:false},
+    {l:'Bill amount',v:'₹'+Math.round(bd.billAmt).toLocaleString('en-IN'),bold:true},
+    {l:'Advance',v:'₹'+(bd.advance||0).toLocaleString('en-IN'),bold:false},
+    {l:'Account Pay',v:'₹'+(bd.acctPay||0).toLocaleString('en-IN'),bold:false},
+    {l:'Cash Taken',v:'₹'+(bd.cashTaken||0).toLocaleString('en-IN'),bold:false},
+    {l:'Difference',v:'₹'+Math.round(bd.diff||0).toLocaleString('en-IN'),bold:true},
+  ];
+  sfc(252,252,250);rc(payX,y,payW,52,'F');
+  sdc(180,180,160);rc(payX,y,payW,52);
+  let py=y+1;
+  const rowHp=52/payRows.length;
+  payRows.forEach((pr,pi)=>{
+    if(pr.bold){sfc(235,245,235);}else{sfc(252,252,252);}
+    rc(payX,py,payW,rowHp,'F');
+    sdc(200,200,180);ln(payX,py+rowHp,payX+payW,py+rowHp);
+    // Vertical divider between label and value
+    const midX=payX+payW*0.52;
+    ln(midX,py,midX,py+rowHp);
+    sf(pr.bigger?8:6.5,pr.bold?'bold':'normal');sc(pr.bigger?10:0,pr.bigger?60:0,pr.bigger?20:0);
+    tx(pr.l,payX+2,py+rowHp-1.5);
+    sf(pr.bigger?8:7,pr.bold?'bold':'normal');
+    sc(pr.l==='Difference'&&bd.diff!==0?150:0,pr.l==='Difference'&&bd.diff!==0?20:0,0);
+    tx(pr.v,payX+payW-1.5,py+rowHp-1.5,{align:'right'});
+    py+=rowHp;
+  });
+  y+=54;
+
+  // Denomination (if any)
+  const denomEntries=DENOMS.filter(d=>bd.denoms&&bd.denoms[d]>0);
+  if(denomEntries.length){
+    const denomH=5+denomEntries.length*4;
+    sfc(255,253,230);rc(payX,y,payW,denomH,'F');
+    sdc(200,190,140);rc(payX,y,payW,denomH);
+    sf(5.5,'bold');sc(80,60,0);
+    tx('Denomination: ₹'+bd.cashTaken.toLocaleString('en-IN'),payX+1,y+4);
+    let dy=y+7;
+    denomEntries.forEach(d=>{
+      sf(5.5,'normal');sc(40,30,0);
+      tx(`₹${d} × ${bd.denoms[d]} = ₹${(d*bd.denoms[d]).toLocaleString('en-IN')}`,payX+2,dy);
+      dy+=4;
+    });
+    y+=denomH+2;
+  }
+
+  // ── FOOTER ────────────────────────────────────────────
+  const footY=H-10;
+  if(!dealer){
+    // Full footer with signature lines and Vasundhara branding
+    sdc(30,80,40);ln(m,footY,W-m,footY);
+    sf(7,'normal');sc(40,40,40);
+    tx('कृषक के हस्ताक्षर',m+8,footY+5);
+    tx('वास्ते वसुंधरा सीड्स',W-m-8,footY+5,{align:'right'});
+    sdc(160,160,160);
+    doc.setLineDash([1.5,1.5]);
+    ln(m+2,footY+7,m+40,footY+7);
+    ln(W-m-40,footY+7,W-m-2,footY+7);
+    doc.setLineDash([]);
+  } else {
+    // Dealer mode — plain signature lines only, no names
+    sdc(160,160,160);
+    doc.setLineDash([1.5,1.5]);
+    ln(m+2,footY+4,m+50,footY+4);
+    ln(W-m-50,footY+4,W-m-2,footY+4);
+    doc.setLineDash([]);
+    sf(6,'normal');sc(120,120,120);
+    tx('Buyer Signature',m+8,footY+8);
+    tx('Authorised Signatory',W-m-8,footY+8,{align:'right'});
+  }
+
+  return doc;
+}
+
+function getBD(){
+  const active=billItems.filter(it=>it.bags>0&&it.variety);
+  const subtotal=active.reduce((s,it)=>s+(it.amount||0),0);
+  const discount=+document.getElementById('p-disc')?.value||0;
+  const billAmt=subtotal-discount;
+  const advance=+document.getElementById('p-advance')?.value||0;
+  const acctPay=+document.getElementById('p-acct')?.value||0;
+  const cashTaken=getDenomTotal();
+  const diff=billAmt-advance-acctPay-cashTaken;
+  const remark=diff===0?(acctPay>0?'BANK-VS':'VS'):'Credit-vs';
+  const today=new Date();
+  const dateStr=`${today.getDate().toString().padStart(2,'0')}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getFullYear()}`;
+  const invNo=editingBillId?getBills().find(b=>b.id===editingBillId)?.invoiceNo:getInvNo(dealerMode);
+  return{name:document.getElementById('b-name')?.value.trim()||'',
+    village:document.getElementById('b-village')?.value.trim()||'',
+    mobile:document.getElementById('b-mobile')?.value.trim()||'',
+    active,subtotal,discount,billAmt,advance,acctPay,cashTaken,diff,remark,
+    dateStr,invNo,denoms:getDenomMap(),dealer:dealerMode};
+}
+
+async function saveBillAndPDF(){
+  const name=document.getElementById('b-name')?.value.trim();
+  if(!name){notify('Enter customer name','err');return;}
+  const active=billItems.filter(it=>it.bags>0&&it.variety);
+  if(!active.length){notify('Add at least one item','err');return;}
+  const bd=getBD();
+  const bills=getBills();
+  const bill={
+    id:editingBillId||('b'+Date.now()),
+    invoiceNo:bd.invNo,date:new Date().toISOString(),
+    name:bd.name,village:bd.village,mobile:bd.mobile,
+    items:bd.active,subtotal:bd.subtotal,discount:bd.discount,
+    billAmt:bd.billAmt,advance:bd.advance,acctPay:bd.acctPay,
+    cashTaken:bd.cashTaken,diff:bd.diff,remark:bd.remark,denoms:bd.denoms,dealer:bd.dealer,
+  };
+  if(editingBillId){
+    const idx=bills.findIndex(b=>b.id===editingBillId);
+    if(idx>=0) bills[idx]=bill; else bills.unshift(bill);
+  } else {
+    bills.unshift(bill);
+  }
+  saveBills(bills);
+  if(!editingBillId) bumpInvNo(dealerMode);
+  notify(`✓ Bill #${bd.invNo} saved`,'ok');
+  try{
+    const doc=await buildPDF(bd);
+    const fn=(bd.name.replace(/\s+/g,'_')||'Bill')+'_'+bd.invNo+'.pdf';
+    doc.save(fn);
+    notify(`↓ ${fn}`,'ok');
+  }catch(e){notify('PDF error: '+e.message,'err');}
+  pushBillToSheet(bill);
+  populateSuggestions();
+  clearBill();
+}
+
+async function previewOnlyPDF(){
+  const bd=getBD();
+  try{const doc=await buildPDF(bd);window.open(doc.output('bloburl'),'_blank');}
+  catch(e){notify('Error: '+e.message,'err');}
+}
+
+async function reprintBill(id){
+  const bill=getBills().find(b=>b.id===id);
+  if(!bill) return;
+  const bd={...bill,active:bill.items,dateStr:new Date(bill.date||Date.now()).toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-')};
+  try{
+    const doc=await buildPDF(bd);
+    const fn=(bd.name.replace(/\s+/g,'_')||'Bill')+'_'+bd.invoiceNo+'.pdf';
+    doc.save(fn);notify(`↓ Reprinted: ${fn}`,'ok');
+  }catch(e){notify('Error: '+e.message,'err');}
+}
+
+function editBill(id){
+  const bill=getBills().find(b=>b.id===id);
+  if(!bill) return;
+  editingBillId=id;
+  navTo('new-bill');
+  // Fill form
+  document.getElementById('b-name').value=bill.name||'';
+  document.getElementById('b-village').value=bill.village||'';
+  document.getElementById('b-mobile').value=bill.mobile||'';
+  document.getElementById('p-disc').value=bill.discount||0;
+  document.getElementById('p-advance').value=bill.advance||0;
+  document.getElementById('p-acct').value=bill.acctPay||0;
+  // Dealer mode
+  dealerMode=bill.dealer||false;
+  const dTog=document.getElementById('dealer-toggle');
+  if(dTog) dTog.checked=dealerMode;
+  const banner=document.getElementById('mode-banner');
+  if(banner) banner.classList.toggle('show',dealerMode);
+  // Clear items and repopulate
+  const container=document.getElementById('items-container');
+  container.innerHTML='';billItems=[];
+  (bill.items||[]).forEach(it=>addItem(it));
+  // Denoms
+  DENOMS.forEach(d=>{
+    const el=document.getElementById(`d${d}`);
+    if(el) el.value=(bill.denoms&&bill.denoms[d])||'';
+  });
+  calcDenom();calcPayment();
+  // Show edit indicator
+  const sub=document.getElementById('inv-sub');
+  if(sub) sub.innerHTML=`✏️ Editing Bill #${bill.invoiceNo} · ${bill.name}`;
+  notify(`Editing bill #${bill.invoiceNo}`,'info');
+}
+
+function clearBill(){
+  editingBillId=null;
+  ['b-name','b-village','b-mobile'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['p-disc','p-advance','p-acct'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=0;});
+  DENOMS.forEach(d=>{const el=document.getElementById(`d${d}`);if(el)el.value='';});
+  const container=document.getElementById('items-container');
+  if(container) container.innerHTML='';
+  billItems=[];
+  addItem();addItem();addItem();
+  calcDenom();calcPayment();
+  updateInvDisplay();
+}
+
+// ═══════════════════════════════════════
+// BILLS LIST
+// ═══════════════════════════════════════
+function renderBills(){filterBills();}
+function filterBills(){
+  const q=(document.getElementById('bill-search')?.value||'').toLowerCase();
+  const bills=getBills().filter(b=>!q||b.name?.toLowerCase().includes(q)||String(b.invoiceNo).includes(q)||b.village?.toLowerCase().includes(q));
+  const list=document.getElementById('bills-list');
+  const sub=document.getElementById('bills-count-sub');
+  const vs=bills.filter(b=>!b.dealer).length;
+  const dl=bills.filter(b=>b.dealer).length;
+  if(sub) sub.textContent=`${bills.length} total · ${vs} VS series · ${dl} Dealer series`;
+  if(!bills.length){
+    list.innerHTML='<div class="empty"><div class="empty-ico">📄</div><div class="empty-text">No bills yet</div><div class="empty-sub">Create a new bill</div></div>';
+    return;
+  }
+  list.innerHTML=bills.map(b=>`
+    <div class="bill-card">
+      <div class="bill-card-top">
+        <div class="bill-name">${b.name||'—'}${b.dealer?'<span style="font-size:10px;color:var(--amber);margin-left:6px;font-weight:700">[DEALER]</span>':''}</div>
+        <div class="bill-inv">#${b.invoiceNo}</div>
+      </div>
+      <div class="bill-meta">${b.village||''} · ${b.date?new Date(b.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):''}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <div class="bill-amount">₹${Math.round(b.billAmt||0).toLocaleString('en-IN')}</div>
+        <span class="badge ${b.diff===0?'badge-g':b.diff>0?'badge-a':'badge-r'}">${b.remark||'—'}</span>
+      </div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:3px">${b.items?.length||0} items · ${b.items?.reduce((s,it)=>s+(it.bags||0),0)||0} bags</div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-secondary btn-sm" onclick="reprintBill('${b.id}');event.stopPropagation()" style="margin:0;flex:1">↓ PDF</button>
+        <button class="btn btn-secondary btn-sm" onclick="editBill('${b.id}');event.stopPropagation()" style="margin:0;flex:1">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBill('${b.id}');event.stopPropagation()" style="margin:0;flex:1">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function deleteBill(id){
+  if(!confirm('Delete this bill?')) return;
+  saveBills(getBills().filter(b=>b.id!==id));
+  renderBills();notify('Bill deleted');
+}
+
+// ═══════════════════════════════════════
+// STOCK
+// ═══════════════════════════════════════
+function renderStock(){
+  const list=document.getElementById('stock-list');if(!list)return;
+  const q=(document.getElementById('stock-q')?.value||'').toLowerCase();
+  const allLots=getAllLots();
+  const lots=q?allLots.filter(p=>p.variety.toLowerCase().includes(q)):allLots;
+  const sub=document.getElementById('stock-sub');
+  if(sub) sub.textContent=allLots.length+' lots · '+allLots.reduce((s,p)=>s+(p.bags||0),0).toLocaleString('en-IN')+' bags purchased';
+  if(!lots.length){list.innerHTML='<div class="empty"><div class="empty-ico">📦</div><div class="empty-text">No stock data</div></div>';return;}
+  window._stockItems=allLots; list.innerHTML=lots.map((p)=>{
+    const si=allLots.indexOf(p);
+    const sold=getSoldBags(p.variety);
+    const stock=Math.max(0,(p.bags||0)-sold);
+    const pct=p.bags>0?Math.min(100,(stock/p.bags)*100):0;
+    const col=pct>50?'var(--green)':pct>20?'var(--amber)':'var(--red)';
+    const qty=((stock*(p.bagSize||40))/100).toFixed(1);
+    const varKey=p.variety.replace(/'/g,"\'");
+    return `<div class="card" style="padding:10px 12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+        <div style="font-size:12px;font-weight:600;flex:1;padding-right:8px;line-height:1.4">${p.variety}</div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:${col}">${stock} bags</div>
+          <div style="font-size:9px;color:var(--ink3)">${qty} Qtl · ₹${(p.rate||0).toLocaleString('en-IN')}/Qtl</div>
+        </div>
+      </div>
+      <div class="stock-bar"><div class="stock-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:3px">Sold: ${sold} · Purchased: ${p.bags||0} · ${p.bagSize||40}kg bags</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-secondary btn-sm" onclick="editStockByIdx(${si})" style="margin:0;flex:1">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteStockByIdx(${si})" style="margin:0;flex:1">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function initSettings(){
+  const url=getSheet();
+  const urlEl=document.getElementById('sheet-url');if(urlEl&&url) urlEl.value=url;
+  // Show connection status
+  const badge=document.getElementById('sync-status-badge');
+  if(badge) badge.textContent=url?'Connected ✓':'Not connected';
+  if(badge) badge.className='badge '+(url?'badge-g':'badge-a');
+  const vsEl=document.getElementById('inv-vs');
+  if(vsEl) vsEl.value=getInvNo(false);
+  const dlEl=document.getElementById('inv-dl');
+  if(dlEl) dlEl.value=getInvNo(true);
+}
+function saveSheetUrl(){const url=(document.getElementById('sheet-url')?.value||'').trim();if(!url){notify('Paste URL','err');return;}localStorage.setItem(K.sheet,url);notify('✓ Connected');}
+function clearSheet(){localStorage.removeItem(K.sheet);const el=document.getElementById('sheet-url');if(el)el.value='';notify('Disconnected');}
+function testSheet(){const url=getSheet();if(!url){notify('No URL','err');return;}fetch(url+'?tab=PACKING',{mode:'cors'}).then(r=>r.json()).then(()=>notify('✓ OK','ok')).catch(e=>notify('Possible: '+e.message));}
+function saveInvSettings(){
+  const vs=+document.getElementById('inv-vs')?.value;
+  const dl=+document.getElementById('inv-dl')?.value;
+  if(vs>0) localStorage.setItem(K.invVS,vs);
+  if(dl>0) localStorage.setItem(K.invDL,dl);
+  updateInvDisplay();notify('✓ Invoice series saved','ok');
+}
+function savePurchaseData(){
+  const json=document.getElementById('purchase-json')?.value||'';
+  try{const data=JSON.parse(json);if(!Array.isArray(data))throw new Error('Must be array');savePurchaseStore(data);notify('✓ '+data.length+' lots saved','ok');}
+  catch(e){notify('JSON error: '+e.message,'err');}
+}
+function exportBills(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(getBills(),null,2)],{type:'application/json'}));
+  a.download='vasundhara_bills.json';a.click();
+}
+function clearAllBills(){if(!confirm('Delete ALL bills?'))return;localStorage.removeItem(K.bills);renderBills();notify('Cleared');}
+
+// ═══════════════════════════════════════
+// GOOGLE SHEETS
+// ═══════════════════════════════════════
+async function syncStockFromSheets(){
+  const url=getSheet();
+  if(!url){notify('Connect Google Sheets in Settings first','err');return;}
+  notify('Syncing from Inward App...','info');
+  try{
+    // Fetch PACKING tab — columns: ID,Supplier,Variety,Date,Bags,BagSize,PackQty,Loose,Ghamsi,TotalPacked,Location,LotNo,...
+    const res=await fetch(url+'?tab=PACKING');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    if(data.status==='error') throw new Error(data.msg||'Sheet error');
+    const rows=data.rows||[];
+    if(rows.length<2){notify('No packing rows in sheet yet','info');return;}
+    // Detect if first row is headers
+    const firstRow=rows[0];
+    const hasHeaders=isNaN(firstRow[4]); // bags col should be numeric
+    const dataRows=hasHeaders?rows.slice(1):rows;
+    // Build variety→bags map from packed lots
+    const map={};
+    dataRows.forEach(row=>{
+      const supplier=String(row[1]||'').trim();
+      const variety=String(row[2]||'').trim();
+      const bags=+row[4]||0;
+      const bagSize=+row[5]||40;
+      const lotNo=String(row[11]||'').trim();
+      if(!variety) return;
+      // Use variety as the lot key (same as inward app)
+      if(!map[variety]) map[variety]={variety,bags:0,bagSize,rate:0,lotNo,supplier};
+      map[variety].bags+=bags;
+    });
+    const newLots=Object.values(map);
+    if(!newLots.length){notify('No valid packing rows found','err');return;}
+    // Replace stored lots entirely — packed qty IS the available stock
+    savePurchaseStore(newLots);
+    window._stockItems=null;
+    notify('✓ Stock synced: '+newLots.length+' lots from Inward App','ok');
+    renderStock();
+  }catch(e){
+    console.error('Sync error:',e);
+    notify('Sync failed: '+e.message,'err');
+  }
+}
+
+
+async function pushAllBillsToSheet(){
+  const url=getSheet();
+  if(!url){notify('Connect Google Sheets first in Settings','err');return;}
+  const bills=getBills();
+  if(!bills.length){notify('No bills to push','err');return;}
+  notify('Pushing '+bills.length+' bills...','info');
+  let pushed=0,failed=0;
+  for(const bill of bills){
+    try{
+      const today=new Date(bill.date||Date.now()).toISOString().slice(0,10);
+      const hdrs=['Series','InvoiceNo','Name','Village','Mobile','Variety','Bags','BagSize','Qty','Rate','Amount','Subtotal','Discount','BillAmt','Advance','AcctPay','Cash','Difference','Remark','Date'];
+      const rows=bill.items.map((it,i)=>[
+        bill.dealer?'DL':'VS',bill.invoiceNo,
+        bill.name,bill.village,bill.mobile,
+        it.variety,it.bags,it.bagSize,it.qty,it.rate,it.amount,
+        i===0?bill.subtotal:'',i===0?bill.discount:'',i===0?bill.billAmt:'',
+        i===0?bill.advance:'',i===0?bill.acctPay:'',i===0?bill.cashTaken:'',
+        i===0?bill.diff:'',i===0?bill.remark:'',today
+      ]);
+      await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'APPEND_ROWS',tab:'SALE',headers:hdrs,rows})});
+      pushed++;
+    }catch(e){failed++;console.warn('Failed bill #'+bill.invoiceNo,e);}
+  }
+  setSyncStatus('ok','Pushed '+pushed+' bills'+(failed?' ('+failed+' failed)':''));
+  notify('✓ Pushed '+pushed+' of '+bills.length+' bills to Sheet','ok');
+}
+
+async function pushBillToSheet(bill){
+  const url=getSheet(); if(!url) return;
+  try{
+    const today=new Date(bill.date||Date.now()).toISOString().slice(0,10);
+    const hdrs=['Series','InvoiceNo','Name','Village','Mobile','Variety','Bags','BagSize','Qty','Rate','Amount','Subtotal','Discount','BillAmt','Advance','AcctPay','Cash','Difference','Remark','Date'];
+    const rows=bill.items.map((it,i)=>[
+      bill.dealer?'DL':'VS', bill.invoiceNo,
+      bill.name, bill.village, bill.mobile,
+      it.variety, it.bags, it.bagSize, it.qty, it.rate, it.amount,
+      i===0?bill.subtotal:'', i===0?bill.discount:'', i===0?bill.billAmt:'',
+      i===0?bill.advance:'', i===0?bill.acctPay:'', i===0?bill.cashTaken:'',
+      i===0?bill.diff:'', i===0?bill.remark:'', today
+    ]);
+    const payload={action:'APPEND_ROWS',tab:'SALE',headers:hdrs,rows};
+    // no-cors strips Content-Type:application/json and empties the body.
+    // Must send as application/x-www-form-urlencoded with data= param.
+    const body=new URLSearchParams({data:JSON.stringify(payload)});
+    await fetch(url,{method:'POST',mode:'no-cors',body});
+    notify('☁ #'+bill.invoiceNo+' saved to Sheet','ok');
+    const d=document.getElementById('sync-dot');
+    if(d){d.style.background='#4caf50';setTimeout(()=>{d.style.background='';},3000);}
+  }catch(e){
+    console.warn('Sheet push failed:',e);
+    notify('Sheet push failed','err');
+  }
+}
+
+function setSyncStatus(state, msg){
+  const dot=document.getElementById('sync-dot');
+  const badge=document.getElementById('sync-status-badge');
+  if(dot){
+    dot.style.background=state==='ok'?'#4caf50':state==='err'?'#f44336':'#c47a00';
+    setTimeout(()=>{dot.style.background='';},5000);
+  }
+  if(badge){
+    badge.textContent=msg||'';
+    badge.className='badge '+(state==='ok'?'badge-g':state==='err'?'badge-r':'badge-a');
+  }
+}
+
+
+// ══ SUGGESTIONS — name/village from past bills ══════════════════
+function populateSuggestions(){
+  const bills=getBills();
+  const names=[...new Set(bills.map(b=>b.name).filter(Boolean))].sort();
+  const villages=[...new Set(bills.map(b=>b.village).filter(Boolean))].sort();
+  const dnEl=document.getElementById('dl-names');
+  if(dnEl){dnEl.innerHTML=names.map(n=>`<option value="${n}">`).join('');}
+  const dvEl=document.getElementById('dl-villages');
+  if(dvEl){dvEl.innerHTML=villages.map(v=>`<option value="${v}">`).join('');}
+}
+
+// ══ STOCK FORM — add/edit lots ═════════════════════════════════════
+function saveStockLot(){
+  const editKey=document.getElementById('stock-edit-key')?.value||'';
+  const variety=(document.getElementById('st-variety')?.value||'').trim();
+  const bags=+document.getElementById('st-bags')?.value||0;
+  const bsz=+document.getElementById('st-bsz')?.value||40;
+  const rate=+document.getElementById('st-rate')?.value||0;
+  if(!variety){notify('Enter variety name','err');return;}
+  if(!bags){notify('Enter number of bags','err');return;}
+  const purchase=getPurchase();
+  const rec={variety,bags,bagSize:bsz,rate};
+  const idx=purchase.findIndex(p=>p.variety===variety);
+  if(editKey&&idx>=0) purchase[idx]=rec;
+  else if(idx>=0) purchase[idx]=rec; // update existing same variety
+  else purchase.push(rec);
+  savePurchaseStore(purchase);
+  cancelStockEdit();
+  notify('✓ '+variety+' saved ('+bags+' bags @ ₹'+rate+'/Qtl)','ok');
+  renderStock();
+}
+
+function editStockByIdx(i){
+  const p=window._stockItems&&window._stockItems[i];
+  if(!p) return;
+  document.getElementById('stock-edit-key').value=p.variety;
+  document.getElementById('st-variety').value=p.variety;
+  document.getElementById('st-bags').value=p.bags;
+  document.getElementById('st-bsz').value=p.bagSize;
+  document.getElementById('st-rate').value=p.rate;
+  const t=document.getElementById('stock-form-title');
+  if(t) t.innerHTML='✏️ Edit Lot<button class="btn btn-secondary btn-sm" id="stock-cancel-btn" onclick="cancelStockEdit()" style="margin:0;margin-left:8px">✕ Cancel</button>';
+  document.getElementById('stock-form-card')?.scrollIntoView({behavior:'smooth'});
+}
+
+function deleteStockByIdx(i){
+  const p=window._stockItems&&window._stockItems[i];
+  if(!p){notify('Lot not found — try scrolling','err');return;}
+  if(!confirm('Delete "'+p.variety+'"?')) return;
+  // Remove from stored purchase only (BUILTIN not affected)
+  const purchase=getPurchase().filter(x=>x.variety!==p.variety);
+  savePurchaseStore(purchase);
+  window._stockItems=null;
+  renderStock();
+  notify('✓ Deleted: '+p.variety);
+}
+
+function editStockLot(variety){
+  const lot=getAllLots().find(p=>p.variety===variety);
+  if(!lot) return;
+  document.getElementById('stock-edit-key').value=variety;
+  document.getElementById('st-variety').value=lot.variety;
+  document.getElementById('st-bags').value=lot.bags;
+  document.getElementById('st-bsz').value=lot.bagSize;
+  document.getElementById('st-rate').value=lot.rate;
+  const title=document.getElementById('stock-form-title');
+  if(title) title.innerHTML='✏️ Edit Lot: '+variety.slice(0,30)+(variety.length>30?'…':'')
+    +'<button class="btn btn-secondary btn-sm" id="stock-cancel-btn" onclick="cancelStockEdit()" style="margin:0">✕ Cancel</button>';
+  const cancelBtn=document.getElementById('stock-cancel-btn');
+  if(cancelBtn) cancelBtn.style.display='flex';
+  document.getElementById('stock-form-card')?.scrollIntoView({behavior:'smooth'});
+}
+
+function deleteStockLot(variety){
+  if(!confirm('Delete '+variety+'?')) return;
+  const purchase=getPurchase().filter(p=>p.variety!==variety);
+  savePurchaseStore(purchase);
+  renderStock();notify('Deleted: '+variety);
+}
+
+function cancelStockEdit(){
+  document.getElementById('stock-edit-key').value='';
+  document.getElementById('st-variety').value='';
+  document.getElementById('st-bags').value='';
+  document.getElementById('st-bsz').value='';
+  document.getElementById('st-rate').value='';
+  const title=document.getElementById('stock-form-title');
+  if(title) title.innerHTML='➕ Add New Lot<button class="btn btn-secondary btn-sm" id="stock-cancel-btn" onclick="cancelStockEdit()" style="margin:0;display:none">✕ Cancel</button>';
+}
+
+// ══ DASHBOARD ══════════════════════════════════════════════════════
+function renderDashboard(){
+  renderSummaryCards();
+  renderDailyChart();
+  renderVarietyChart();
+  renderCreditSummary();
+}
+
+function renderSummaryCards(){
+  const bills=getBills();
+  const today=new Date().toISOString().slice(0,10);
+  const todayBills=bills.filter(b=>b.date&&b.date.slice(0,10)===today);
+  const totalRevenue=bills.reduce((s,b)=>s+(b.billAmt||0),0);
+  const todayRevenue=todayBills.reduce((s,b)=>s+(b.billAmt||0),0);
+  const totalBags=bills.reduce((s,b)=>s+b.items.reduce((ss,it)=>ss+(it.bags||0),0),0);
+  const pendingCredit=bills.filter(b=>b.remark==='Credit-vs').reduce((s,b)=>s+(b.diff||0),0);
+  const el=document.getElementById('dash-cards');
+  if(!el)return;
+  el.innerHTML=[
+    {l:'Total Revenue',v:'₹'+Math.round(totalRevenue/100000).toFixed(1)+'L',sub:'All bills',c:'var(--green)'},
+    {l:'Today Sales',v:'₹'+Math.round(todayRevenue).toLocaleString('en-IN'),sub:todayBills.length+' bills',c:'var(--blue)'},
+    {l:'Bags Sold',v:totalBags.toLocaleString('en-IN'),sub:'all lots',c:'var(--amber)'},
+    {l:'Credit Pending',v:'₹'+Math.round(pendingCredit).toLocaleString('en-IN'),sub:bills.filter(b=>b.remark==='Credit-vs').length+' bills',c:'var(--red)'},
+  ].map(sc=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:left">
+    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3)">${sc.l}</div>
+    <div style="font-size:20px;font-weight:700;margin:4px 0 2px;color:${sc.c};font-family:var(--mono)">${sc.v}</div>
+    <div style="font-size:10px;color:var(--ink3)">${sc.sub}</div>
+  </div>`).join('');
+}
+
+function renderDailyChart(){
+  const bills=getBills();
+  // Last 14 days
+  const days={};
+  for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days[d.toISOString().slice(0,10)]={amt:0,qty:0};}
+  bills.forEach(b=>{
+    const d=b.date?.slice(0,10);
+    if(d&&days[d]){
+      days[d].amt+=b.billAmt||0;
+      days[d].qty+=b.items.reduce((s,it)=>s+(it.qty||0),0);
+    }
+  });
+  const labels=Object.keys(days).map(d=>d.slice(5));
+  const amts=Object.values(days).map(v=>Math.round(v.amt));
+  const qtys=Object.values(days).map(v=>parseFloat(v.qty.toFixed(1)));
+  const maxAmt=Math.max(...amts,1);
+  const maxQty=Math.max(...qtys,.1);
+  const W=320,H=120,PL=36,PR=8,PT=10,PB=28;
+  const cW=W-PL-PR,cH=H-PT-PB;
+  const n=labels.length;
+  const bW=Math.floor(cW/n)-2;
+  const bars=labels.map((lbl,i)=>{
+    const ah=Math.round((amts[i]/maxAmt)*cH);
+    const qh=Math.round((qtys[i]/maxQty)*cH);
+    const x=PL+Math.round(i*(cW/n));
+    return `<rect x="${x}" y="${PT+cH-ah}" width="${bW}" height="${ah}" fill="rgba(26,92,42,.7)" rx="2"/>
+      <rect x="${x+bW/2}" y="${PT+cH-qh}" width="${bW/2}" height="${qh}" fill="rgba(196,122,0,.8)" rx="1"/>
+      <text x="${x+bW/2}" y="${H-PB+14}" font-size="7" fill="#a09070" text-anchor="middle">${lbl}</text>`;
+  }).join('');
+  const el=document.getElementById('dash-daily-chart');
+  if(!el)return;
+  el.innerHTML=`<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+cH}" stroke="#ddd" stroke-width="1"/>
+    <line x1="${PL}" y1="${PT+cH}" x2="${W-PR}" y2="${PT+cH}" stroke="#ddd" stroke-width="1"/>
+    ${bars}
+    <text x="4" y="${PT+cH/2}" font-size="7" fill="#1a5c2a" transform="rotate(-90,4,${PT+cH/2})">₹ Amt</text>
+    <rect x="${W-60}" y="${PT}" width="8" height="8" fill="rgba(26,92,42,.7)" rx="1"/>
+    <text x="${W-50}" y="${PT+7}" font-size="7" fill="#5a4e38">Amount</text>
+    <rect x="${W-60}" y="${PT+12}" width="8" height="8" fill="rgba(196,122,0,.8)" rx="1"/>
+    <text x="${W-50}" y="${PT+19}" font-size="7" fill="#5a4e38">Qty Qtl</text>
+  </svg>`;
+}
+
+function renderVarietyChart(){
+  const bills=getBills();
+  const lots=getAllLots();
+  // Aggregate sold by variety
+  const sold={};
+  bills.forEach(b=>b.items.forEach(it=>{
+    if(it.variety) sold[it.variety]=(sold[it.variety]||0)+(it.bags||0);
+  }));
+  // Get top 10 by purchased bags
+  const top=lots.sort((a,b)=>(b.bags||0)-(a.bags||0)).slice(0,10);
+  const W=320,H=200,PL=130,PR=10,PT=10,PB=10;
+  const cW=W-PL-PR,n=top.length;
+  const rH=Math.floor((H-PT-PB)/n)-2;
+  const maxBags=Math.max(...top.map(p=>p.bags||0),1);
+  const rows=top.map((p,i)=>{
+    const bW=Math.round(((p.bags||0)/maxBags)*cW);
+    const sW=Math.round(((sold[p.variety]||0)/maxBags)*cW);
+    const y=PT+i*(rH+2);
+    const shortName=p.variety.length>22?p.variety.slice(0,20)+'…':p.variety;
+    return `<text x="${PL-4}" y="${y+rH/2+3}" font-size="7" fill="#5a4e38" text-anchor="end">${shortName}</text>
+      <rect x="${PL}" y="${y}" width="${bW}" height="${rH}" fill="rgba(26,92,42,.25)" rx="2"/>
+      <rect x="${PL}" y="${y+2}" width="${sW}" height="${rH-4}" fill="rgba(26,92,42,.8)" rx="2"/>
+      <text x="${PL+bW+2}" y="${y+rH/2+3}" font-size="6.5" fill="#a09070">${sold[p.variety]||0}/${p.bags||0}</text>`;
+  }).join('');
+  const el=document.getElementById('dash-variety-chart');
+  if(!el)return;
+  el.innerHTML=`<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <rect x="${PL-2}" y="${PT-2}" width="2" height="${H-PT-PB}" fill="#ddd"/>
+    ${rows}
+    <rect x="${W-100}" y="${H-20}" width="8" height="8" fill="rgba(26,92,42,.25)" rx="1"/>
+    <text x="${W-90}" y="${H-13}" font-size="7" fill="#5a4e38">Purchased</text>
+    <rect x="${W-40}" y="${H-20}" width="8" height="8" fill="rgba(26,92,42,.8)" rx="1"/>
+    <text x="${W-30}" y="${H-13}" font-size="7" fill="#5a4e38">Sold</text>
+  </svg>`;
+}
+
+function renderCreditSummary(){
+  const bills=getBills().filter(b=>b.remark==='Credit-vs');
+  const el=document.getElementById('dash-credit-list');if(!el)return;
+  if(!bills.length){el.innerHTML='<div style="font-size:12px;color:var(--ink3);padding:8px 0">No pending credit bills</div>';return;}
+  const total=bills.reduce((s,b)=>s+(b.diff||0),0);
+  const sub=document.getElementById('dash-credit-sub');
+  if(sub) sub.textContent=bills.length+' bills · Pending: ₹'+Math.round(total).toLocaleString('en-IN');
+  el.innerHTML=bills.map(b=>`
+    <div style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:var(--card)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+        <div>
+          <div style="font-size:14px;font-weight:700">${b.name}</div>
+          <div style="font-size:11px;color:var(--ink3)">${b.village||''} · #${b.invoiceNo}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--red)">₹${Math.round(b.diff||0).toLocaleString('en-IN')}</div>
+          <div style="font-size:10px;color:var(--ink3)">${b.date?new Date(b.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):''}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--ink2)">Bill: ₹${Math.round(b.billAmt||0).toLocaleString('en-IN')} · Paid: ₹${Math.round((b.billAmt||0)-(b.diff||0)).toLocaleString('en-IN')}</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-secondary btn-sm" onclick="reprintBill('${b.id}')" style="margin:0;flex:1">↓ PDF</button>
+        <button class="btn btn-secondary btn-sm" onclick="editBill('${b.id}')" style="margin:0;flex:1">✏️ Edit</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══ CREDIT-VS PAGE ══════════════════════════════════════════════════
+function renderCreditPage(){
+  const bills=getBills().filter(b=>b.remark==='Credit-vs');
+  const list=document.getElementById('credit-list');if(!list)return;
+
+  // Group by name for consolidated view
+  const grouped={};
+  bills.forEach(b=>{
+    const key=b.name+'||'+b.village;
+    if(!grouped[key])grouped[key]={name:b.name,village:b.village,bills:[],totalDiff:0,totalBill:0};
+    grouped[key].bills.push(b);
+    grouped[key].totalDiff+=b.diff||0;
+    grouped[key].totalBill+=b.billAmt||0;
+  });
+  const grandTotal=bills.reduce((s,b)=>s+(b.diff||0),0);
+  const sub=document.getElementById('credit-sub');
+  if(sub) sub.textContent=Object.keys(grouped).length+' customers · Total pending: ₹'+Math.round(grandTotal).toLocaleString('en-IN');
+
+  list.innerHTML=Object.values(grouped).sort((a,b)=>b.totalDiff-a.totalDiff).map(g=>`
+    <div style="background:var(--card);border:1.5px solid ${g.totalDiff>0?'rgba(181,34,34,.25)':'var(--border)'};border-radius:var(--r);margin-bottom:10px;overflow:hidden">
+      <div style="padding:12px 14px;background:${g.totalDiff>0?'var(--redl)':'var(--greenl)'}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:15px;font-weight:700">${g.name}</div>
+            <div style="font-size:11px;color:var(--ink3)">${g.village||''} · ${g.bills.length} bill${g.bills.length>1?'s':''}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${g.totalDiff>0?'var(--red)':'var(--green)'}">₹${Math.round(g.totalDiff).toLocaleString('en-IN')}</div>
+            <div style="font-size:10px;color:var(--ink3)">pending of ₹${Math.round(g.totalBill).toLocaleString('en-IN')}</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:8px 14px">
+        ${g.bills.map(b=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:12px;font-weight:600">#${b.invoiceNo} · ${b.date?new Date(b.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):''}</div>
+            <div style="font-size:11px;color:var(--ink3)">Bill: ₹${Math.round(b.billAmt||0).toLocaleString('en-IN')}</div>
+          </div>
+          <div style="text-align:right;display:flex;align-items:center;gap:6px">
+            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--red)">₹${Math.round(b.diff||0).toLocaleString('en-IN')}</div>
+            <button class="btn btn-secondary btn-sm" onclick="editBill('${b.id}')" style="margin:0">✏️</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+
+function copyAppsScript(){
+  const code=`function doPost(e){
+  try{
+    var raw='';
+    // Try JSON body first, then form-encoded data= param (used by no-cors fetch)
+    try{ if(e.postData && e.postData.contents) raw=e.postData.contents; }catch(ex){}
+    if(!raw && e.parameter && e.parameter.data) raw=e.parameter.data;
+    if(!raw) return resp({status:'error',msg:'no data received'});
+    var d=JSON.parse(raw);
+    var ss=SpreadsheetApp.getActiveSpreadsheet();
+    var sheet=ss.getSheetByName(d.tab);
+    if(!sheet) sheet=ss.insertSheet(d.tab);
+    if(d.action==='SAVE_ALL'){
+      sheet.clearContents();
+      if(d.headers) sheet.appendRow(d.headers);
+      if(d.rows) d.rows.forEach(function(r){sheet.appendRow(r);});
+    } else if(d.action==='APPEND_ROWS'){
+      if(sheet.getLastRow()===0 && d.headers) sheet.appendRow(d.headers);
+      if(d.rows) d.rows.forEach(function(r){sheet.appendRow(r);});
+    }
+    return resp({status:'ok',rows:sheet.getLastRow()});
+  }catch(err){
+    return resp({status:'error',msg:err.message});
+  }
+}
+function doGet(e){
+  try{
+    var tab=e.parameter.tab||'INWARD';
+    var ss=SpreadsheetApp.getActiveSpreadsheet();
+    var sheet=ss.getSheetByName(tab);
+    if(!sheet) return resp({status:'ok',rows:[]});
+    return resp({status:'ok',rows:sheet.getDataRange().getValues()});
+  }catch(err){
+    return resp({status:'error',msg:err.message});
+  }
+}
+function resp(obj){
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code)
+      .then(()=>notify('✓ Apps Script code copied — paste in Google Apps Script','ok'))
+      .catch(()=>fallbackCopy(code));
+  } else { fallbackCopy(code); }
+}
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  notify('✓ Apps Script code copied','ok');
+}
+
+// ═══════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════
+function notify(msg,type='ok'){
+  const wrap=document.getElementById('notif-wrap');
+  const el=document.createElement('div');el.className='notif '+type;el.textContent=msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .4s';setTimeout(()=>el.remove(),400);},2800);
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+window.addEventListener('load',()=>{
+  // Version key — bump to wipe old merged BUILTIN data
+  const APP_VER='billing_v3';
+  if(localStorage.getItem('vb_app_ver')!==APP_VER){
+    // First run on new version — wipe old purchase data (was BUILTIN-merged)
+    // Bills are preserved
+    localStorage.removeItem('vb_purchase');
+    localStorage.setItem('vb_app_ver',APP_VER);
+  }
+  // Seed BUILTIN only if purchase store is empty
+  if(!getPurchase().length) savePurchaseStore(BUILTIN.slice());
+  updateInvDisplay();
+  addItem();addItem();addItem();
+  calcDenom();
+  populateSuggestions();
+  setTimeout(()=>{navTo('dashboard');},50);
+});
+</script>
+</body>
+</html>
